@@ -1,0 +1,70 @@
+name: SideBell
+
+options:
+  bundleIdPrefix: com.shinrenpan
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+  developmentLanguage: zh-Hant
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    # Swift 6.2+ Approachable Concurrency：模組預設 MainActor 隔離。
+    # 傳輸層與 ViewModel 幾乎全在主 actor 上，逐檔標注只是雜訊。
+    SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    SWIFT_APPROACHABLE_CONCURRENCY: "YES"
+    SWIFT_STRICT_CONCURRENCY: complete
+    ENABLE_USER_SCRIPT_SANDBOXING: "YES"
+    DEVELOPMENT_TEAM: "VZWPMD258L"
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  SideBell:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+    settings:
+      base:
+        PRODUCT_NAME: SideBell
+        PRODUCT_BUNDLE_IDENTIFIER: com.shinrenpan.sidebell
+        INFOPLIST_FILE: Sources/App/Info.plist
+        GENERATE_INFOPLIST_FILE: "NO"
+        # 1 = iPhone、2 = iPad。患者端眼控場景以 iPad 為主，
+        # 照顧者端與觸控患者場景為 iPhone，兩者都必須支援。
+        TARGETED_DEVICE_FAMILY: "1,2"
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ENABLE_PREVIEWS: "YES"
+
+  SideBellTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: SideBell
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.shinrenpan.sidebell.tests
+        GENERATE_INFOPLIST_FILE: "YES"
+
+schemes:
+  SideBell:
+    build:
+      targets:
+        SideBell: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - SideBellTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

@@ -1,0 +1,16 @@
+# Spectra app data
+.spectra/
+openspec/.vector-search.db*
+
+# xcodegen 生成物：project.yml 才是真相來源
+*.xcodeproj/
+
+# Xcode
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+*.moved-aside
+
+# macOS
+.DS_Store
