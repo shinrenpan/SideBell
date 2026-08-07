@@ -10,6 +10,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     /// 與 App 同壽命的事件消費者。場景可能還不存在，但它必須已經在聽。
     private(set) var callCenter: CallCenter?
     private(set) var roleStore = RoleStore()
+    private(set) var disclaimerStore = DisclaimerStore()
+    /// 不依賴角色的藍牙可用性觀察者，供首頁使用。
+    /// 此處只建立物件，`startObserving()` 要等使用者確認免責聲明後才呼叫——
+    /// 那一步才會建立 manager 並觸發權限請求。
+    private(set) var bluetoothAvailability = BluetoothAvailability()
 
     func application(
         _ application: UIApplication,
@@ -44,10 +49,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate {
     /// 供設定或角色選擇畫面呼叫。切換角色會重建傳輸層的角色綁定。
+    ///
+    /// 角色未變更時不動傳輸：啟動流程會先在 `didFinishLaunching` 依既有角色
+    /// 啟動傳輸，接著場景配置又會走一次進入角色的路徑。若不擋掉，剛建立的
+    /// 連線會在使用者還沒看到畫面時就被拆掉重來。
     func updateRole(_ role: AppRole) {
+        let previous = roleStore.role
         roleStore.save(role)
 
-        guard let callCenter else { return }
+        guard previous != role, let callCenter else { return }
+
         callCenter.stop()
         if let transportRole = role.transportRole {
             callCenter.start(as: transportRole)

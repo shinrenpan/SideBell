@@ -5,7 +5,11 @@ options:
   deploymentTarget:
     iOS: "18.0"
   createIntermediateGroups: true
-  developmentLanguage: zh-Hant
+  # 開發語言即 fallback 語言：裝置語言不在支援清單時顯示的就是它。
+  # 設 en 而非 zh-Hant 的決定性理由是 Shipaton 評審——國際比賽的評審多半
+  # 用英文裝置，而 Peace Prize 評的是產品使命，他們得先看懂才能評。
+  # 字串本地化本身屬 W4（spec 第 7 節），此處只定 fallback。
+  developmentLanguage: en
   groupSortPosition: top
 
 settings:

@@ -10,8 +10,7 @@ final class TransportPoCViewModel {
 
     @ObservationIgnored private let callCenter: CallCenter
     @ObservationIgnored private let roleStore: RoleStore
-    /// 角色變更需由 AppDelegate 重建傳輸層綁定，因此交給 C 層處理。
-    @ObservationIgnored var onRoleChange: ((AppRole) -> Void)?
+    @ObservationIgnored var onRoute: (@MainActor (Router) -> Void)?
 
     init(callCenter: CallCenter, roleStore: RoleStore) {
         self.callCenter = callCenter
@@ -23,9 +22,6 @@ final class TransportPoCViewModel {
         case .onAppear:
             await handleOnAppear()
 
-        case let .selectRole(role):
-            handleSelectRole(role)
-
         case .sendCall:
             await handleSendCall()
 
@@ -34,6 +30,9 @@ final class TransportPoCViewModel {
 
         case .dismissFailure:
             state.failureText = nil
+
+        case .openSettings:
+            onRoute?(.openPatientSettings)
         }
     }
 }
@@ -52,12 +51,6 @@ private extension TransportPoCViewModel {
         callCenter.onEvent = { [weak self] _ in
             self?.syncFromCallCenter()
         }
-    }
-
-    func handleSelectRole(_ role: AppRole) {
-        state.role = role
-        onRoleChange?(role)
-        syncFromCallCenter()
     }
 
     func handleSendCall() async {

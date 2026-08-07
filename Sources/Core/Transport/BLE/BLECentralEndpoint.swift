@@ -37,7 +37,22 @@ final class BLECentralEndpoint: NSObject {
     /// 注意這與「範圍外斷線」完全不同——後者必須永不放棄地自動重連，
     /// 那是照護產品的安全底線（見 spec 3.1）。
     private var noServiceAttempts: [UUID: Int] = [:]
+    private var noServiceCooldownUntil: [UUID: Date] = [:]
+    /// 冷卻結束時主動喚醒用。
+    ///
+    /// 冷卻的檢查點在 `didDiscover`，但那個回呼要掃描**發現**對端才會觸發，
+    /// 而掃描設了 allowDuplicates: false——同一台裝置在一次掃描期間只回報
+    /// 一次。冷卻期間沒有斷線、就不會重啟掃描、就不會有新的發現事件，
+    /// 於是冷卻到期也沒有人來叫醒它。這個排程就是那個叫醒的人。
+    private var cooldownWakeTask: Task<Void, Never>?
     private static let maxNoServiceAttempts = 3
+    /// 達到上限後的冷卻時間。
+    ///
+    /// 刻意**不是「永久放棄」**：只要對端回來就必須連上，那是 spec 3.1 的
+    /// 底線，不能為了省電而放棄。實測顯示三次嘗試在五秒內就用完，而使用者
+    /// 重開一次 App 遠不止五秒——永久放棄等於「患者端重開機後照顧者端
+    /// 再也連不上」。冷卻只是把空轉降頻，不是關掉重連。
+    private static let noServiceCooldown: TimeInterval = 10
 
     /// 因「連上但沒有 SideBell 服務」而主動斷開的對端。
     ///
@@ -88,6 +103,9 @@ extension BLECentralEndpoint {
         callOrigins.removeAll()
         awaitingRediscovery.removeAll()
         noServiceAttempts.removeAll()
+        noServiceCooldownUntil.removeAll()
+        cooldownWakeTask?.cancel()
+        cooldownWakeTask = nil
         emitConnectionState()
     }
 
@@ -138,7 +156,10 @@ private extension BLECentralEndpoint {
     }
 
     func startScanningIfReady() {
-        guard wantsScanning, let manager, manager.state == .poweredOn, !manager.isScanning else { return }
+        // 同 peripheral 端：不信任 `manager.isScanning`，覆蓋安裝後它可能
+        // 反映的是已被替換掉的舊實例。
+        guard wantsScanning, let manager, manager.state == .poweredOn else { return }
+        manager.stopScan()
 
         // 背景掃描必須指定服務識別碼（平台規則，非最佳實務）。
         // 前景走同一條路徑，避免出現「前景能連、背景連不上」的分歧。
@@ -167,6 +188,17 @@ private extension BLECentralEndpoint {
         manager.stopScan()
     }
 
+    /// 冷卻結束後主動重啟掃描，讓 `didDiscover` 有機會再次觸發。
+    func scheduleCooldownWake() {
+        cooldownWakeTask?.cancel()
+        cooldownWakeTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(Self.noServiceCooldown))
+            guard !Task.isCancelled, let self else { return }
+            SideBellLog.transport.info("central: 冷卻時間到，重啟掃描")
+            restartScanning()
+        }
+    }
+
     /// 重啟掃描以重置 `allowDuplicates: false` 造成的去重狀態。
     /// 只在斷線時呼叫，不做週期性重啟——那會白白耗電。
     func restartScanning() {
@@ -179,21 +211,8 @@ private extension BLECentralEndpoint {
         )
     }
 
-    /// 由 CBManagerState 映射出使用者需要知道的不可用原因。
-    /// `unknown` / `resetting` 是啟動瞬間的暫態，回 nil 以免文字閃爍。
-    func unavailability(for managerState: CBManagerState) -> BluetoothUnavailability? {
-        switch managerState {
-        case .poweredOn: nil
-        case .poweredOff: .poweredOff
-        case .unauthorized: .unauthorized
-        case .unsupported: .unsupported
-        case .unknown, .resetting: nil
-        @unknown default: nil
-        }
-    }
-
     func emitConnectionState() {
-        if let manager, let reason = unavailability(for: manager.state) {
+        if let manager, let reason = BluetoothAvailability.unavailability(for: manager.state) {
             onEvent(.connectionStateChanged(.unavailable(reason)))
             return
         }
@@ -289,10 +308,13 @@ extension BLECentralEndpoint: @preconcurrency CBCentralManagerDelegate {
         // 掃描期間每次回報都會進來，量大且多為重複，用 debug 級別避免淹沒關鍵事件。
         SideBellLog.transport.debug("central: 發現對端 state=\(peripheral.state.rawValue)")
 
-        // 已達上限：對端仍在廣播，但連上後拿不到服務。停止空轉，
-        // 等待使用者去把對端改回患者角色（正式 UI 會顯示提示與重連按鈕）。
-        if (noServiceAttempts[peripheral.identifier] ?? 0) >= Self.maxNoServiceAttempts {
-            return
+        // 已達上限：對端仍在廣播，但連上後拿不到服務。進入冷卻以免空轉，
+        // 冷卻結束後重新給機會——對端可能只是重開機或換回患者角色。
+        if let until = noServiceCooldownUntil[peripheral.identifier] {
+            guard Date() >= until else { return }
+            SideBellLog.transport.info("central: 冷卻結束，重新嘗試連線")
+            noServiceCooldownUntil.removeValue(forKey: peripheral.identifier)
+            noServiceAttempts.removeValue(forKey: peripheral.identifier)
         }
 
         if awaitingRediscovery.remove(peripheral.identifier) != nil {
@@ -338,9 +360,27 @@ extension BLECentralEndpoint: @preconcurrency CBCentralManagerDelegate {
         didDisconnectPeripheral peripheral: CBPeripheral,
         error: Error?
     ) {
-        SideBellLog.transport.info("central: 斷線 error=\(error?.localizedDescription ?? "無")")
+        SideBellLog.transport.info(
+            "central: 斷線 error=\(error?.localizedDescription ?? "無", privacy: .public)"
+        )
         peers[peripheral.identifier]?.ackCharacteristic = nil
         peers[peripheral.identifier]?.isSubscribed = false
+
+        if error != nil {
+            // 對端自己消失了（裝置關機、App 被終止、走出範圍）——iOS 會在
+            // 這種情況帶錯誤，我們主動斷線時則不會。
+            //
+            // 這與「連上卻拿不到服務」是完全不同的失敗：後者重試再多次也
+            // 不會好（對端根本不是患者端角色），前者只要對端回來就該重連。
+            // 不清掉計數的話，患者端裝置重開機後照顧者端會因為舊帳而拒絕
+            // 再連，症狀是「除非照顧者自己重開 App，否則永遠連不上」——
+            // 而照顧者不會知道要這麼做。
+            if noServiceAttempts.removeValue(forKey: peripheral.identifier) != nil {
+                SideBellLog.transport.info("central: 對端消失，清除無服務重試計數")
+            }
+            noServiceCooldownUntil.removeValue(forKey: peripheral.identifier)
+            awaitingRediscovery.remove(peripheral.identifier)
+        }
         if awaitingRediscovery.contains(peripheral.identifier) {
             // 對端正在重建服務。掛連線意圖只會連回同一個沒有服務的狀態，
             // 等它重新廣播再說。
@@ -378,8 +418,11 @@ extension BLECentralEndpoint: @preconcurrency CBPeripheralDelegate {
             let attempts = (noServiceAttempts[peripheral.identifier] ?? 0) + 1
             noServiceAttempts[peripheral.identifier] = attempts
             if attempts >= Self.maxNoServiceAttempts {
+                noServiceCooldownUntil[peripheral.identifier] =
+                    Date().addingTimeInterval(Self.noServiceCooldown)
+                scheduleCooldownWake()
                 SideBellLog.transport.info(
-                    "central: 對端連續 \(attempts) 次無 SideBell 服務，停止自動重連（對端可能不是患者端角色）"
+                    "central: 對端連續 \(attempts) 次無 SideBell 服務，冷卻 \(Self.noServiceCooldown) 秒後再試"
                 )
             } else {
                 SideBellLog.transport.info(
@@ -442,8 +485,9 @@ extension BLECentralEndpoint: @preconcurrency CBPeripheralDelegate {
         SideBellLog.transport.info("central: 訂閱狀態 notifying=\(characteristic.isNotifying)")
         peers[peripheral.identifier]?.isSubscribed = (error == nil && characteristic.isNotifying)
         if error == nil, characteristic.isNotifying {
-            // 訂閱成功，重置計數：下次中斷從頭算起。
+            // 訂閱成功，重置計數與冷卻：下次中斷從頭算起。
             noServiceAttempts.removeValue(forKey: peripheral.identifier)
+            noServiceCooldownUntil.removeValue(forKey: peripheral.identifier)
         }
         stopScanningIfConnected()
         emitConnectionState()

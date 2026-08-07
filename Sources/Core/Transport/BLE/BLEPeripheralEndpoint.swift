@@ -88,12 +88,14 @@ extension BLEPeripheralEndpoint {
 
 private extension BLEPeripheralEndpoint {
     func startAdvertisingIfReady() {
-        guard wantsAdvertising,
-              let manager,
-              manager.state == .poweredOn,
-              !manager.isAdvertising
-        else { return }
+        guard wantsAdvertising, let manager, manager.state == .poweredOn else { return }
 
+        // 刻意不檢查 `manager.isAdvertising`。覆蓋安裝後，系統會把上一版
+        // App 的 BLE 狀態交還給新版，其中包含「你正在廣播」——但那個廣播
+        // 屬於已被替換掉的實例，實際上不會被任何人掃到。信任該旗標會讓
+        // 我們跳過啟動，症狀是「顯示廣播中，卻沒有人連得上」。
+        // 先停再開，代價是幾毫秒。
+        manager.stopAdvertising()
         SideBellLog.transport.info("peripheral: 開始廣播")
         manager.startAdvertising([
             CBAdvertisementDataServiceUUIDsKey: [SideBellGATT.serviceUUID]
@@ -124,20 +126,8 @@ private extension BLEPeripheralEndpoint {
         }
     }
 
-    /// 見 BLECentralEndpoint 的同名方法：暫態回 nil 以免文字閃爍。
-    func unavailability(for managerState: CBManagerState) -> BluetoothUnavailability? {
-        switch managerState {
-        case .poweredOn: nil
-        case .poweredOff: .poweredOff
-        case .unauthorized: .unauthorized
-        case .unsupported: .unsupported
-        case .unknown, .resetting: nil
-        @unknown default: nil
-        }
-    }
-
     func emitConnectionState() {
-        if let manager, let reason = unavailability(for: manager.state) {
+        if let manager, let reason = BluetoothAvailability.unavailability(for: manager.state) {
             onEvent(.connectionStateChanged(.unavailable(reason)))
             return
         }
@@ -192,7 +182,9 @@ extension BLEPeripheralEndpoint: @preconcurrency CBPeripheralManagerDelegate {
     }
 
     func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
-        SideBellLog.transport.info("peripheral: 服務已加入 error=\(error?.localizedDescription ?? "無")")
+        SideBellLog.transport.info(
+            "peripheral: 服務已加入 error=\(error?.localizedDescription ?? "無", privacy: .public)"
+        )
         guard error == nil else {
             callMessageCharacteristic = nil
             return

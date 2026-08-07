@@ -23,10 +23,19 @@ extension TransportPoCViewModel {
 extension TransportPoCViewModel {
     enum Action: Sendable {
         case onAppear
-        case selectRole(AppRole)
         case sendCall
         case ack(UUID)
         case dismissFailure
+        case openSettings
+    }
+}
+
+// MARK: - Router
+
+extension TransportPoCViewModel {
+    enum Router: Sendable {
+        /// 開啟患者端設定。導航歸 C 層執行。
+        case openPatientSettings
     }
 }
 

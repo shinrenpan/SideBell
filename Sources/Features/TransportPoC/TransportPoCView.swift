@@ -9,7 +9,6 @@ struct TransportPoCView: View {
 
     var body: some View {
         List {
-            roleSection
             statusSection
             actionSection
             receivedSection
@@ -18,6 +17,17 @@ struct TransportPoCView: View {
             }
         }
         .navigationTitle("SideBell PoC")
+        .toolbar {
+            // 只有患者端需要這個入口：照顧者端的設定在分頁列上，
+            // 而且照顧者沒有誤觸的顧慮。
+            if viewModel.state.role == .patient {
+                ToolbarItem(placement: .topBarTrailing) {
+                    TwoStepConfirmButton(idleTitle: "設定", confirmTitle: "再按一次") {
+                        Task { await viewModel.doAction(.openSettings) }
+                    }
+                }
+            }
+        }
         .task {
             await viewModel.doAction(.onAppear)
         }
@@ -27,17 +37,6 @@ struct TransportPoCView: View {
 // MARK: - Sections
 
 private extension TransportPoCView {
-    var roleSection: some View {
-        Section("角色") {
-            Picker("目前角色", selection: roleBinding) {
-                Text("未選擇").tag(AppRole.unselected)
-                Text("患者端").tag(AppRole.patient)
-                Text("照顧者端").tag(AppRole.caregiver)
-            }
-            .pickerStyle(.segmented)
-        }
-    }
-
     var statusSection: some View {
         Section("連線狀態") {
             LabeledContent("狀態", value: connectionText)
@@ -151,13 +150,6 @@ private extension TransportPoCView {
 // MARK: - 私有
 
 private extension TransportPoCView {
-    var roleBinding: Binding<AppRole> {
-        Binding(
-            get: { viewModel.state.role },
-            set: { role in Task { await viewModel.doAction(.selectRole(role)) } }
-        )
-    }
-
     var connectionText: String {
         switch viewModel.state.connectionState {
         case .idle: "未啟動"

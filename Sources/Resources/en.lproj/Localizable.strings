@@ -1,0 +1,9 @@
+/* SideBell — English strings.
+
+   目前 UI 字串仍硬編碼於程式碼中，本檔存在的目的是向系統「宣告 App 支援
+   哪些語言」。沒有這個宣告，系統會認定 App 只支援 development language，
+   VoiceOver 會用該語言的語音去唸其他語言的內容——實測後果是中文內容被
+   英文語音朗讀，連緊急電話號碼都會唸錯。
+
+   實際的字串本地化屬 W4（spec 第 7 節）。
+ */

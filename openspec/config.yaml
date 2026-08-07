@@ -66,6 +66,14 @@ context: |
   hard stop. This is real alarm playback, not the silent-audio keepalive that
   section 1.1 rejected.
 
+  Accessibility policy: VoiceOver, Switch Control and Dynamic Type support are
+  implemented alongside each screen, never deferred to a later polish phase.
+  Every change's acceptance criteria must include VoiceOver operability of the
+  screens it touches. The target population includes blind users: sighted-but-
+  immobile users rely on eye control, blind-but-mobile users on VoiceOver, and
+  blind-and-immobile users on Switch Control with audible feedback. Feedback
+  that exists only in visual form does not exist for part of the audience.
+
   `DECISIONS.md` at the repo root is the running decision log (date + decision
   + one-line rationale). Append new decisions there; never edit
   `SideBell_Spec_v0.5.md`.
