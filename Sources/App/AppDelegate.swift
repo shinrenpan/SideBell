@@ -11,6 +11,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private(set) var callCenter: CallCenter?
     private(set) var roleStore = RoleStore()
     private(set) var disclaimerStore = DisclaimerStore()
+    /// 資料容器由此持有——`ModelContext` 不持有 `ModelContainer`，
+    /// 容器一旦被回收就會留下指向已死容器的 context，下次操作直接崩潰。
+    private(set) lazy var modelContainer = SideBellModelContainer.make()
+    private(set) lazy var gridItemStore = GridItemStore(context: modelContainer.mainContext)
+    private(set) var callDelivery: CallDelivery?
+    let callAnnouncer = CallAnnouncer()
+    let callFeedback = CallFeedback()
+
     /// 不依賴角色的藍牙可用性觀察者，供首頁使用。
     /// 此處只建立物件，`startObserving()` 要等使用者確認免責聲明後才呼叫——
     /// 那一步才會建立 manager 並觸發權限請求。
@@ -28,6 +36,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         let transport = BLETransport(nickname: nil)
         let callCenter = CallCenter(transport: transport)
         self.callCenter = callCenter
+
+        // 呼叫生命週期與傳輸層同時建立：待送佇列與逾時判定不能綁在畫面上，
+        // 那會讓它們隨畫面生滅。
+        let delivery = CallDelivery(transport: transport)
+        self.callDelivery = delivery
+        delivery.start()
 
         if let transportRole = role.transportRole {
             callCenter.start(as: transportRole)

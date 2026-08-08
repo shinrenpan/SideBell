@@ -18,34 +18,42 @@ final class BLETransport: CallTransport {
     private var peripheralEndpoint: BLEPeripheralEndpoint?
     private var centralEndpoint: BLECentralEndpoint?
 
-    private let stream: AsyncStream<TransportEvent>
-    private let continuation: AsyncStream<TransportEvent>.Continuation
+    /// 每個消費者一條序列。扇出的理由見 `CallTransport.makeEventStream()`。
+    private var continuations: [UUID: AsyncStream<TransportEvent>.Continuation] = [:]
 
     private(set) var connectionState: ConnectionState = .idle
-
-    var events: AsyncStream<TransportEvent> { stream }
 
     /// - Parameter nickname: 患者自訂暱稱，寫入 Device Info 特徵。未設定時傳 nil，
     ///   照顧者端會改用系統的藍牙裝置名稱。
     init(nickname: String?) {
         self.nickname = nickname
-        // 無上限緩衝：App 被 BLE 事件於背景喚醒時，事件可能早於消費者出現。
-        // 會丟棄元素的緩衝策略會讓那則呼叫永遠消失，症狀是「偶爾收不到」。
-        let (stream, continuation) = AsyncStream<TransportEvent>.makeStream(
-            bufferingPolicy: .unbounded
-        )
-        self.stream = stream
-        self.continuation = continuation
     }
 
     deinit {
-        continuation.finish()
+        for continuation in continuations.values {
+            continuation.finish()
+        }
     }
 }
 
 // MARK: - CallTransport
 
 extension BLETransport {
+    func makeEventStream() -> AsyncStream<TransportEvent> {
+        let id = UUID()
+        // 無上限緩衝：App 被 BLE 事件於背景喚醒時，事件可能早於消費者出現。
+        // 會丟棄元素的緩衝策略會讓那則呼叫永遠消失，症狀是「偶爾收不到」。
+        let (stream, continuation) = AsyncStream<TransportEvent>.makeStream(
+            bufferingPolicy: .unbounded
+        )
+        continuation.onTermination = { [weak self] _ in
+            // onTermination 在任意執行緒觸發，回到主行為者才能碰字典。
+            Task { @MainActor in self?.continuations.removeValue(forKey: id) }
+        }
+        continuations[id] = continuation
+        return stream
+    }
+
     func start(as role: TransportRole) {
         if let current = self.role, current != role {
             stop()
@@ -114,11 +122,18 @@ extension BLETransport {
 
 // MARK: - 私有
 
-private extension BLETransport {
+extension BLETransport {
+    /// 把端點事件扇出給所有消費者。
+    ///
+    /// 刻意不是 private：扇出正確與否無法從 BLE 之外的路徑觀察，
+    /// 而它壞掉的症狀（事件被瓜分）在單元測試裡看不見、只在雙機實測時
+    /// 表現為「一則到、一則不到」。測試需要一個能直接推事件的入口。
     func emit(_ event: TransportEvent) {
         if case .connectionStateChanged(let state) = event {
             connectionState = state
         }
-        continuation.yield(event)
+        for continuation in continuations.values {
+            continuation.yield(event)
+        }
     }
 }

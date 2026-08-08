@@ -33,7 +33,7 @@ extension AppRouter {
 
         appDelegate.updateRole(role)
 
-        let container = makeContainer(for: role, callCenter: callCenter, roleStore: appDelegate.roleStore)
+        let container = makeContainer(for: role, appDelegate: appDelegate, callCenter: callCenter)
         container.modalPresentationStyle = .fullScreen
         source.present(container, animated: animated)
     }
@@ -88,14 +88,24 @@ private extension AppRouter {
 
     func makeContainer(
         for role: AppRole,
-        callCenter: CallCenter,
-        roleStore: RoleStore
+        appDelegate: AppDelegate,
+        callCenter: CallCenter
     ) -> UIViewController {
         switch role {
         case .patient:
-            PatientHomeContainer(callCenter: callCenter, roleStore: roleStore)
+            guard let delivery = appDelegate.callDelivery else {
+                preconditionFailure("進入患者端時 CallDelivery 應已建立")
+            }
+            return PatientHomeContainer(
+                callCenter: callCenter,
+                roleStore: appDelegate.roleStore,
+                store: appDelegate.gridItemStore,
+                delivery: delivery,
+                announcer: appDelegate.callAnnouncer,
+                feedback: appDelegate.callFeedback
+            )
         case .caregiver:
-            CaregiverHomeContainer(callCenter: callCenter, roleStore: roleStore)
+            return CaregiverHomeContainer(callCenter: callCenter, roleStore: appDelegate.roleStore)
         case .unselected:
             preconditionFailure("已於呼叫端排除")
         }

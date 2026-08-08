@@ -11,11 +11,17 @@ protocol CallTransport: AnyObject {
     /// 目前連線狀態。
     var connectionState: ConnectionState { get }
 
-    /// 傳輸事件序列。
+    /// 建立一條**專屬於呼叫者**的傳輸事件序列。
     ///
-    /// 同一個實例回傳同一個序列，且採無上限緩衝：App 被 BLE 事件於背景喚醒時，
-    /// 事件可能早於任何消費者出現，會丟棄元素的緩衝策略會讓那則呼叫永遠消失。
-    var events: AsyncStream<TransportEvent> { get }
+    /// 刻意是方法而非屬性：`AsyncStream` 不是多播的，多個消費者迭代同一條
+    /// 序列會把事件瓜分掉——每則事件只送到其中一個消費者手上。實測後果是
+    /// 「呼叫一則到、一則不到，確認也一則到、一則不到」，而兩邊都沒有錯誤
+    /// 可看。傳輸層本來就有兩個與 App 同壽命的消費者（`CallCenter` 與
+    /// `CallDelivery`），因此扇出是這裡的常態，不是例外。
+    ///
+    /// 每條序列採無上限緩衝：App 被 BLE 事件於背景喚醒時，事件可能早於任何
+    /// 消費者出現，會丟棄元素的緩衝策略會讓那則呼叫永遠消失。
+    func makeEventStream() -> AsyncStream<TransportEvent>
 
     /// 以指定角色啟動。患者端開始廣播，照顧者端開始掃描。
     func start(as role: TransportRole)

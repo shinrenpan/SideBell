@@ -57,9 +57,9 @@ extension CallCenter {
 
     /// 停止傳輸，但**不**停止事件消費。
     ///
-    /// `AsyncStream` 只能被迭代一次：一旦取消消費 Task，該序列即永久終止，
-    /// 之後重新啟動所接到的會是一條死掉的序列，BLE 事件永遠送不進來——
-    /// 症狀是「切換角色後再也連不上，重開 App 才正常」。
+    /// 序列只能被迭代一次：一旦取消消費 Task，該序列即永久終止，之後重新
+    /// 啟動所接到的會是一條死掉的序列，BLE 事件永遠送不進來——症狀是
+    /// 「切換角色後再也連不上，重開 App 才正常」。
     /// 消費者的壽命因此與 CallCenter 相同，只在 deinit 結束。
     func stop() {
         transport.stop()
@@ -84,9 +84,12 @@ private extension CallCenter {
     func startConsumingIfNeeded() {
         guard consumeTask == nil else { return }
 
+        // 取自己專屬的一條序列。與 CallDelivery 共用同一條會把事件瓜分掉，
+        // 症狀是連線狀態與確認時有時無——見 CallTransport.makeEventStream()。
+        let events = transport.makeEventStream()
         consumeTask = Task { [weak self] in
-            guard let self else { return }
-            for await event in transport.events {
+            for await event in events {
+                guard let self else { return }
                 handle(event)
             }
         }

@@ -2,24 +2,57 @@ import UIKit
 
 /// 患者端容器。
 ///
-/// 只做導覽裝配，不持有任何畫面狀態——設定入口屬於主畫面的 toolbar，
-/// 狀態歸該畫面的 ViewModel，導航經由 `onRoute` 交給 C 層。
-///
-/// 先前的版本把一顆 UIButton 疊在容器的 view 上，繞過了整個 MVVMC 結構：
-/// 狀態管理落在容器裡、導航直接呼叫 AppRouter、按鈕還跟內容搶同一塊空間，
-/// 實測時 VoiceOver 的聚焦框甚至把它和下方那一列框在一起。
-///
-/// 改用標準 toolbar 的代價是頂部多佔約 44pt——那正是先前 overlay 想省下的，
-/// 但省法換來的是架構偏離與無障礙問題，不划算。
+/// 只做導覽裝配與防休眠，不持有任何畫面狀態——設定入口屬於主畫面的
+/// toolbar，狀態歸該畫面的 ViewModel，導航經由 `onRoute` 交給 C 層。
 final class PatientHomeContainer: UINavigationController {
-    init(callCenter: CallCenter, roleStore: RoleStore) {
-        // 主畫面暫時沿用 W1 的傳輸驗證畫面，讓骨架改動後能立即確認
-        // 傳輸行為沒有退化。正式的格子畫面就位後，整個 TransportPoC 目錄應刪除；
-        // 設定入口以 `TwoStepConfirmButton` 元件的形式沿用，不需重寫。
-        super.init(rootViewController: TransportPoCHostController(callCenter: callCenter))
+    init(
+        callCenter: CallCenter,
+        roleStore: RoleStore,
+        store: GridItemStore,
+        delivery: CallDelivery,
+        announcer: CallAnnouncer,
+        feedback: CallFeedback
+    ) {
+        super.init(
+            rootViewController: PatientGridHostController(
+                store: store,
+                delivery: delivery,
+                announcer: announcer,
+                feedback: feedback,
+                callCenter: callCenter
+            )
+        )
     }
 
     @MainActor @preconcurrency required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        setIdleTimerDisabled(true)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        setIdleTimerDisabled(false)
+    }
+}
+
+// MARK: - 防休眠
+
+private extension PatientHomeContainer {
+    /// 患者端停留期間停用自動鎖定。
+    ///
+    /// 這不是偏好而是必要條件：裝置鎖屏後純眼控的患者**無法喚醒它**
+    /// （眼球追蹤在鎖定畫面不運作），螢幕一暗整套呼叫系統即等同離線，
+    /// 而患者沒有任何辦法讓它回來。
+    ///
+    /// 放在容器而非畫面，是因為患者端之後會有多個畫面（例如格子編輯），
+    /// 防休眠應涵蓋整段停留期間；而恢復必須確實發生——照顧者端的手機
+    /// 不能跟著一起不睡。
+    func setIdleTimerDisabled(_ disabled: Bool) {
+        UIApplication.shared.isIdleTimerDisabled = disabled
+        SideBellLog.transport.info("patient: 自動鎖定 \(disabled ? "已停用" : "已恢復", privacy: .public)")
     }
 }

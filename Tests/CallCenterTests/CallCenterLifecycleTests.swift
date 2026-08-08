@@ -6,21 +6,20 @@ import Testing
 /// 可觀察呼叫次數的假傳輸層。BLE 行為不在此測試範圍，
 /// 這裡驗的是 CallCenter 的生命週期不變式。
 private final class FakeCallTransport: CallTransport {
-    private let stream: AsyncStream<TransportEvent>
-    private let continuation: AsyncStream<TransportEvent>.Continuation
+    /// 每個消費者一條，與 `BLETransport` 的扇出行為一致。
+    private var continuations: [AsyncStream<TransportEvent>.Continuation] = []
 
     private(set) var startedRoles: [TransportRole] = []
     private(set) var stopCount = 0
 
     var connectionState: ConnectionState = .idle
-    var events: AsyncStream<TransportEvent> { stream }
 
-    init() {
+    func makeEventStream() -> AsyncStream<TransportEvent> {
         let (stream, continuation) = AsyncStream<TransportEvent>.makeStream(
             bufferingPolicy: .unbounded
         )
-        self.stream = stream
-        self.continuation = continuation
+        continuations.append(continuation)
+        return stream
     }
 
     func start(as role: TransportRole) {
@@ -37,7 +36,9 @@ private final class FakeCallTransport: CallTransport {
 
     /// 模擬底層推事件上來。
     func emit(_ event: TransportEvent) {
-        continuation.yield(event)
+        for continuation in continuations {
+            continuation.yield(event)
+        }
     }
 }
 
