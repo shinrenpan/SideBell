@@ -20,6 +20,9 @@ final class CallAnnouncer {
         // 語音——實測曾出現以韓文語音朗讀中文的情況。
         utterance.voice = AVSpeechSynthesisVoice(language: Locale.current.identifier)
             ?? AVSpeechSynthesisVoice(language: "zh-TW")
+        // 略慢於系統預設（0.5）。聽的人可能是聽力退化的長者，也可能是隔著
+        // 一個房間的照顧者；播報只有短短幾個字，放慢的代價很小。
+        utterance.rate = 0.45
         synthesizer.speak(utterance)
     }
 }

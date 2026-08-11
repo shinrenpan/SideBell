@@ -51,9 +51,12 @@
 		<key>UIColorName</key>
 		<string></string>
 	</dict>
+	<!-- armv7 是 32 位元時代的樣板殘留，對 iOS 18 的部署目標沒有意義（現代裝置
+	     全為 arm64，且 iOS 11 起不再執行 32 位元二進位）。改宣告真正的硬體需求：
+	     沒有 BLE，本 App 的唯一功能就不成立。 -->
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>bluetooth-le</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

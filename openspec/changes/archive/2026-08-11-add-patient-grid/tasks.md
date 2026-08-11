@@ -11,10 +11,12 @@
 
 ## 3. 患者端畫面
 
-- [x] 3.1 依「格子欄數依可用寬度自適應，不寫死」在 `Sources/Features/PatientGrid/` 建立四件套與 `PatientGridMocks.swift`，滿足 `The grid fills the screen with large targets`。驗證：iPhone 直向與 iPad 橫向的欄數不同，且兩者每格短邊皆不小於 150pt、間距不小於 24pt。
+- [x] 3.1 依「格子欄數依可用寬度自適應，不寫死」在 `Sources/Features/PatientGrid/` 建立四件套與 `PatientGridMocks.swift`，滿足 `The grid fills the screen with large targets`。驗證：排列由項目數與可用空間共同決定（四格在任何裝置上都是 2×2——那是四個項目的最佳排列，與螢幕寬度無關），格子填滿可用空間，每格短邊不小於 150pt、間距不小於 24pt。
+  > 原驗證條件為「iPhone 直向與 iPad 橫向的欄數不同」，係照 `GridItem(.adaptive(minimum:))` 的行為所寫——該實作已於 2026-08-09 因「四格擠在螢幕上緣、下方三分之二留白」而改寫。欄數隨裝置變化不是目的，格子夠大才是。「自適應而非寫死」改由 `PatientGridLayoutTests` 覆蓋（1–8 格 × 三種螢幕尺寸）。
 - [x] 3.2 實作格子觸發，滿足 `A single tap sends the call`：單擊即送出，無確認步驟、無其他手勢。驗證：以 grep 確認格子的觸發路徑未使用 long press、double tap、swipe 或 drag；實機上單擊即送出。
 - [x] 3.3 依「狀態以符號與文字表達，顏色只是輔助」實作每格的狀態呈現，滿足 `Each cell shows the state of its own most recent call` 與 `Call state is conveyed by more than colour`。驗證：三種狀態各有不同符號，去除顏色後仍可區分；VoiceOver 聚焦時朗讀標題與狀態；重複觸發同一格會以新狀態取代舊狀態。
-- [x] 3.4 在導覽列左側實作常駐連線指示，滿足 `Connection status is permanently visible`。驗證：格子捲動至任意位置指示仍可見；照顧者離開範圍後數秒內指示改變，無需患者操作；不單靠顏色區分。
+- [x] 3.4 在格子上方實作常駐連線指示，滿足 `Connection status is permanently visible`。驗證：指示不隨格子區域移動；照顧者離開範圍後數秒內指示改變，無需患者操作；不單靠顏色區分（符號與文字皆不同）。
+  > 原為「導覽列左側」，2026-08-09 移出導覽列：iOS 26 的 toolbar 只給 `Button` 完整樣式，非 Button 的 item 一律套圖示樣式而丟掉標題。移到格子上方的決定性理由是餘光可察覺——狀態改變沒有聲音也沒有震動，患者全靠視覺被動發現。
 
 ## 4. 回饋與輔助
 
@@ -27,5 +29,5 @@
 - [x] 5.1 建立 `docs/device-verification/w3-patient-grid.md`，涵蓋單擊送出與語音、確認回饋、離開範圍後自動送出、三分鐘逾時、螢幕不自動鎖定、VoiceOver 朗讀、兩種裝置的版面，每項含前置條件、步驟、預期結果、實際結果與 OS 版本欄位。驗證：文件涵蓋本 change 全部實機驗收項目，逐項可獨立執行。
 - [x] 5.2 執行並記錄基本路徑驗證：單擊送出、語音播報、照顧者確認後的震動或音效回饋、格子狀態轉換。驗證：清單中填入實際結果與 OS 版本。
 - [x] 5.3 執行並記錄重送與逾時驗證：照顧者離開範圍時送出呼叫（應維持等待中而非失敗）、照顧者回來後自動送達、三分鐘無回應轉為「無人回應」。驗證：清單中填入實際結果，並確認等待期間患者端未顯示任何失敗字樣。
-- [ ] 5.4 執行並記錄無障礙與版面驗證：VoiceOver 朗讀格子標題與狀態、去色後三種狀態仍可區分、iPhone 與 iPad 的欄數與格子尺寸。驗證：清單中填入實際結果與 OS 版本。
-- [ ] 5.5 執行 W1 驗證清單的 V3 與 V7 回歸測試，確認新增的呼叫生命週期未影響傳輸行為。驗證：兩項在新畫面上重跑通過，結果記入 w3 清單的回歸章節。
+- [x] 5.4 執行並記錄無障礙與版面驗證：VoiceOver 朗讀格子標題與狀態、去色後三種狀態仍可區分、iPhone 與 iPad 的欄數與格子尺寸。驗證：清單中填入實際結果與 OS 版本。
+- [x] 5.5 執行 W1 驗證清單的 V3 與 V7 回歸測試，確認新增的呼叫生命週期未影響傳輸行為。驗證：兩項在新畫面上重跑通過，結果記入 w3 清單的回歸章節。
