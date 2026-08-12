@@ -41,10 +41,14 @@
 			</array>
 		</dict>
 	</dict>
+	<!-- audio 的用途是警報而非媒體播放：照顧者端被 BLE 事件於背景喚醒後，
+	     必須能立即發出可聽見的警報。少了這個模式，背景收到的呼叫只剩一則
+	     安靜的通知——而照顧者可能正睡著。送審時需在備註說明此用途。 -->
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
 		<string>bluetooth-peripheral</string>
+		<string>audio</string>
 	</array>
 	<key>UILaunchScreen</key>
 	<dict>

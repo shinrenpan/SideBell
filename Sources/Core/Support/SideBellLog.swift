@@ -18,4 +18,10 @@ nonisolated enum SideBellLog {
     /// ⚠️ 反過來說，**呼叫標題等患者內容絕不可寫入 log**，無論是否標記
     /// privacy——那是患者的健康相關資訊。
     static let transport = Logger(subsystem: subsystem, category: "transport")
+
+    /// 警報的播放與停止。
+    ///
+    /// 同樣受上方的約束：**絕不可寫入呼叫標題**。警報的診斷只需要知道
+    /// 「有沒有響、為什麼沒響」，不需要知道患者要什麼。
+    static let alert = Logger(subsystem: subsystem, category: "alert")
 }

@@ -5,13 +5,24 @@ import UIKit
 /// 兩個分頁各自持有導覽堆疊——兩邊後續都會有子頁（呼叫詳情、設定項目）。
 /// 照顧者端沒有患者端的誤觸顧慮：使用者是有完整操作能力的家屬或看護。
 final class CaregiverHomeContainer: UITabBarController {
-    init(callCenter: CallCenter, roleStore: RoleStore) {
+    init(
+        callCenter: CallCenter,
+        roleStore: RoleStore,
+        alertPolicy: AlertPolicy,
+        notifier: CallNotifier,
+        onAlertChanged: @escaping @MainActor () -> Void,
+        onDidAppear: @escaping @MainActor () -> Void
+    ) {
         super.init(nibName: nil, bundle: nil)
 
-        // 分頁一暫時沿用 W1 的傳輸驗證畫面；正式的呼叫清單與歷史紀錄
-        // 屬後續里程碑。
         let calls = UINavigationController(
-            rootViewController: TransportPoCHostController(callCenter: callCenter)
+            rootViewController: CaregiverCallsHostController(
+                callCenter: callCenter,
+                alertPolicy: alertPolicy,
+                notifier: notifier,
+                onAlertChanged: onAlertChanged,
+                onDidAppear: onDidAppear
+            )
         )
         calls.tabBarItem = UITabBarItem(
             title: "呼叫",
