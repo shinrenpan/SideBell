@@ -38,9 +38,9 @@ extension AlertAudioSession {
     /// 放在角色切換的路徑上——移到 `viewDidAppear` 之後即消失（見
     /// `CaregiverCallsHostController`）。
     ///
-    /// 一度改為 `Task.detached` 執行，在延後之後價值不明確，卻讓啟用變成
-    /// 非同步、與 `ensureActive()` 的同步呼叫產生不必要的競爭空間，因此移除。
-    /// **若實測顯示延後之後仍有可感知的頓挫，背景執行就有存在價值，屆時再加回。**
+    /// 一度改為 `Task.detached` 執行以避開阻塞，但那讓啟用變成非同步、與
+    /// `ensureActive()` 的同步呼叫產生不必要的競爭空間。移除後實測確認
+    /// **延後之後同步執行也不卡**（2026-08-12），因此背景執行是多餘的。
     func activate() {
         guard !isActive else { return }
         isActive = true

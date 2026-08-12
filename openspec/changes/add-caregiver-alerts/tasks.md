@@ -6,7 +6,7 @@
 ## 2. 警報播放與通知
 
 - [x] 2.1 依「音訊類別的選項依當下情況動態決定」建立 `Sources/Core/Alert/AlertPlayer.swift`（開始播放、停止兩個操作，內部持有 `AVAudioPlayer` 與 `AVSpeechSynthesizer`）並加入 `Sources/Resources/Alert.caf`，滿足 `An arriving call raises an alert` 與 `The alert is heard in every situation the platform permits`。驗證：實機上前景靜音時仍出聲；背景且他人正在播放時仍出聲且對方被壓低；音效載入失敗時語音與震動仍執行；`AVAudioPlayer.play()` 的回傳值不得被忽略。
-  > 原任務要求「播放時正在播放的音樂被中斷而非混音」，已於 2026-08-11 依實測改寫——iOS 不允許背景 App 中斷前景 App 的音訊，改為 duck。同時確立「靜音 ＋ 背景」為平台限制，改以誠實告知處理，見 `DECISIONS.md`。
+  > 原任務要求「播放時正在播放的音樂被中斷而非混音」，已於 2026-08-11 依實測改寫——iOS 不允許背景 App 中斷前景 App 的音訊，改為 duck。當時另判定「靜音 ＋ 背景」為平台限制，**該結論已於 08-12 推翻**（真正的原因是 App 播完音檔就被凍結），四種組合現已全部通過，見 `DECISIONS.md`。
 - [x] 2.2 依「音訊工作階段在角色啟動時就設定並啟用」修改 `Sources/App/AppDelegate.swift`，於進入照顧者角色時設定 `AVAudioSession` 並啟用、離開角色時停用，並處理中斷通知以滿足 `An interrupted alert resumes`。驗證：以 grep 確認音訊工作階段的設定不在任何 View 或 ViewModel 中；實機上背景 30 分鐘後收到呼叫仍能出聲；來電中斷後若仍有未確認的緊急呼叫則恢復播放。
 - [x] 2.3 依「背景時同時走通知與音訊兩條路徑」建立 `Sources/Core/Notification/CallNotifier.swift`（請求權限、送出呼叫通知兩個操作），滿足 `A call arriving in the background is visible on the lock screen`：App 不在前景時，通知與音訊兩條路徑同時發出。驗證：實機鎖屏時通知顯示項目名稱與來源患者，且警報聲不受通知本身是否靜音影響。
 - [x] 2.4 依「通知權限被拒不影響前景警報」把權限請求接上 `Sources/App/AppRouter.swift` 的進入照顧者角色路徑，滿足 `Permission to notify is requested at a moment the caregiver understands`。驗證：權限請求不發生於 App 啟動；拒絕後不再重複請求；未授權時送出通知的路徑靜默略過，音訊警報仍照常。

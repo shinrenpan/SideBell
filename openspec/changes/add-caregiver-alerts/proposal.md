@@ -49,7 +49,8 @@
     - `Sources/Features/CaregiverCalls/CaregiverCallsViewModel.swift`
     - `Sources/Features/CaregiverCalls/CaregiverCallsViewModel+Models.swift`
     - `Sources/Features/CaregiverCalls/CaregiverCallsMocks.swift`
-    - `Sources/Resources/Alert.caf`
+    - `Sources/Resources/Alert.caf`（App 播放用，內含循環間隔）
+    - `Sources/Resources/AlertNotification.caf`（通知用，無間隔）
     - `Tests/AlertTests/AlertPolicyTests.swift`
     - `docs/device-verification/w4-caregiver-alerts.md`
   - Modified:
