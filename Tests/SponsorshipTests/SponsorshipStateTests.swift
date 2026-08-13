@@ -13,7 +13,12 @@ struct SponsorshipStateTests {
     /// 假的方案來源。回傳什麼由每個測試自己決定。
     final class FakeProvider: SponsorshipProviding {
         var plans: [SponsorshipPlan] = SponsorshipProduct.allCases.map {
-            SponsorshipPlan(product: $0, displayPrice: "NT$30")
+            SponsorshipPlan(
+                product: $0,
+                title: "請開發者喝杯咖啡",
+                detail: "小額隨喜，支持無障礙技術的持續研發。",
+                displayPrice: "NT$30"
+            )
         }
         var loadError: (any Error)?
         var purchaseOutcome: SponsorshipPurchaseOutcome = .supported

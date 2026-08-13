@@ -69,7 +69,7 @@ SDK 於 `didFinishLaunching` 設定 API key，此步驟不涉及網路請求。�
 **Behavior**
 
 - 照顧者端設定分頁出現「支持開發者」入口；患者端的設定畫面**沒有**這個入口。
-- 贊助頁列出三個支持方案，每項顯示 App Store 提供的在地化價格，以及該筆款項的具體用途說明。
+- 贊助頁列出三個支持方案，每項顯示 App Store 提供的在地化**名稱、用途說明與價格**。三者都來自商店，程式裡不寫任何一句方案文案。
 - 點選任一方案後進入系統的購買流程。成功後顯示感謝，並在設定頁出現感謝徽章。
 - 同一方案**可重複購買**，每次都是獨立的支持。
 - 無網路時，贊助頁說明需要網路並提供重試；其餘畫面不受影響。
@@ -77,7 +77,7 @@ SDK 於 `didFinishLaunching` 設定 API key，此步驟不涉及網路請求。�
 
 **Interface / data shape**
 
-- `SponsorshipProduct`：三個支持方案的識別碼與用途說明，以列舉定義。價格不寫死在程式裡，由 App Store 提供。
+- `SponsorshipProduct`：三個支持方案的識別碼，以列舉定義。**只有識別碼**——名稱、用途說明、價格都不寫死在程式裡，全部由 App Store 提供。
 - `SponsorshipStore`：對外提供「載入方案」「購買某方案」「是否曾經支持過」三個操作。RevenueCat 的型別**不得洩漏到這個型別之外**——View 與 ViewModel 只認識本專案自己的型別，日後若更換金流方案，改動侷限於此。
 - `SponsorshipViewModel`：沿用專案既有的 `doAction` 單一進入點，動作包含 `onAppear`、`purchase(id)`、`retry`、`dismissFailure`。
 
@@ -119,5 +119,5 @@ SDK 於 `didFinishLaunching` 設定 API key，此步驟不涉及網路請求。�
 
 ## Open Questions
 
-- 三個方案的英文文案需與 `add-localization` 的字串規則一致（字面值為英文、繁中另行翻譯）。若本片先於多語系實作，文案需在多語系那片一併納入。
+- ~~三個方案的英文文案需與 `add-localization` 的字串規則一致~~ — 已不適用：方案文案改由 App Store Connect 提供，不進 String Catalog（見 DECISIONS「方案文案改由商店提供」）。
 - RevenueCat 的 API key 管理方式（是否需要區分開發與正式環境）待實作時依其文件決定；key 本身不屬機密等級的憑證，但仍不應寫死在版控中的原始碼。

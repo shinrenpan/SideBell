@@ -297,36 +297,6 @@
         }
       }
     },
-    "Keeps SideBell on the App Store for about a month." : {
-      "localizations" : {
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "讓 SideBell 在 App Store 上多待約一個月。"
-          }
-        }
-      }
-    },
-    "Keeps SideBell on the App Store for about four days." : {
-      "localizations" : {
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "讓 SideBell 在 App Store 上多待約四天。"
-          }
-        }
-      }
-    },
-    "Keeps SideBell on the App Store for about ten days." : {
-      "localizations" : {
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "讓 SideBell 在 App Store 上多待約十天。"
-          }
-        }
-      }
-    },
     "Leaves this role and returns to the home screen, where you can choose Patient or Caregiver again" : {
       "localizations" : {
         "zh-Hant" : {

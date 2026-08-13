@@ -64,24 +64,45 @@ private extension SponsorshipView {
         } label: {
             HStack(alignment: .firstTextBaseline, spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(plan.displayPrice)
+                    Text(plan.title)
                         .font(.headline)
-                    Text(plan.product.purpose)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                        .foregroundStyle(.primary)
+                    // 說明可能是空的（該商品在 App Store Connect 漏填）。
+                    // 空字串會撐出一行看不見的間距，讀起來像版面壞了。
+                    if !plan.detail.isEmpty {
+                        Text(plan.detail)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 Spacer()
+                // 藍色**只給價格**。List 裡的 Button 預設會把整個 label 染成
+                // 主題色，標題與說明跟著變藍，主次就分不出來了——而深色背景上
+                // 的淡藍比灰色更難讀，對年長的照顧者尤其吃虧。因此下面改用
+                // `.plain`，顏色全部自己指定，藍色留給唯一的行動點：金額。
+                Text(plan.displayPrice)
+                    .font(.headline)
+                    .foregroundStyle(.tint)
                 if viewModel.state.purchasingProduct == plan.product {
                     ProgressView()
                 }
             }
+            // 整列可點，不只文字。少了它，兩段文字之間的空白按不動。
+            .contentShape(.rect)
         }
+        .buttonStyle(.plain)
         // 購買進行中時停用全部方案：連點兩下會送出兩筆交易，而使用者以為
         // 自己只按了一次。這不是在擋重複購買——那是允許的，只是必須是他
         // 刻意再按一次。
         .disabled(viewModel.state.isPurchasing)
-        .accessibilityLabel(String(localized: "\(plan.displayPrice), \(plan.product.purpose)"))
+        // 三段全部來自 App Store，本身已經在地化，**不再包一層 String(localized:)**
+        // ——那會把商店回傳的文字當成待翻譯的 key。順序照畫面上的閱讀順序。
+        .accessibilityLabel(
+            [plan.title, plan.detail, plan.displayPrice]
+                .filter { !$0.isEmpty }
+                .joined(separator: ", ")
+        )
     }
 
     var loadingRow: some View {
@@ -129,6 +150,9 @@ private extension SponsorshipView {
 
 // MARK: - Preview
 
+// Preview 依賴 `#if DEBUG` 裡的 mock，因此自己也必須包起來——
+// 否則 Release build（archive／送審）會找不到 mock 而編譯失敗。
+#if DEBUG
 #Preview("三個方案") {
     NavigationStack {
         SponsorshipView(viewModel: .mock)
@@ -140,3 +164,4 @@ private extension SponsorshipView {
         SponsorshipView(viewModel: .offlineMock)
     }
 }
+#endif

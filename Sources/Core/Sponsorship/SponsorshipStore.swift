@@ -1,9 +1,21 @@
 import Foundation
 import RevenueCat
 
-/// 一個可購買的支持方案：方案本身，加上 App Store 依使用者地區給出的價格。
+/// 一個可購買的支持方案。**三個欄位全部來自 App Store**，程式裡沒有任何
+/// 一句是自己寫的。
+///
+/// 這樣做的理由不只是省一份翻譯：同一份文字會同時出現在 App Store 的商品
+/// 頁、系統的購買確認 sheet、以及這一頁。文案寫在程式裡就會有三個地方各說
+/// 各話的一天，而使用者看到的是哪一份，我們決定不了。
 nonisolated struct SponsorshipPlan: Identifiable, Equatable, Sendable {
     let product: SponsorshipProduct
+    /// 方案名稱，取自 App Store Connect 的本地化顯示名稱。
+    let title: String
+    /// 這筆錢的用途，取自 App Store Connect 的本地化說明。
+    ///
+    /// **可能是空字串**——該商品在 App Store Connect 漏填時就會是空的。
+    /// 畫面據此決定要不要顯示那一行，而不是留一塊空白。
+    let detail: String
     /// 已在地化的價格字串，直接取自 App Store。**不自行格式化**：貨幣符號、
     /// 小數位、千分位在各地區都不同，自己拼出來的數字遲早會與使用者實際
     /// 被扣的金額不一致。
@@ -66,14 +78,19 @@ extension SponsorshipStore {
     /// 而金額由小到大排列是使用者理解這一頁的方式。
     func loadPlans() async throws -> [SponsorshipPlan] {
         let storeProducts = try await fetchProducts(SponsorshipProduct.allCases)
-        let priceByIdentifier = Dictionary(
-            storeProducts.map { ($0.productIdentifier, $0.localizedPriceString) },
+        let productByIdentifier = Dictionary(
+            storeProducts.map { ($0.productIdentifier, $0) },
             uniquingKeysWith: { first, _ in first }
         )
 
         let plans = SponsorshipProduct.allCases.compactMap { product in
-            priceByIdentifier[product.identifier].map {
-                SponsorshipPlan(product: product, displayPrice: $0)
+            productByIdentifier[product.identifier].map {
+                SponsorshipPlan(
+                    product: product,
+                    title: $0.localizedTitle,
+                    detail: $0.localizedDescription,
+                    displayPrice: $0.localizedPriceString
+                )
             }
         }
 
