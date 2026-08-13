@@ -5,7 +5,7 @@
 - [x] 1.1 **開發者操作**：於 App Store Connect 完成稅務與銀行資訊（「協議、稅務與銀行業務」）。驗證：付費 App 協議狀態為「有效」——未生效前，沙盒購買會失敗且錯誤訊息不會指出真正的原因。
 - [x] 1.2 **開發者操作**：建立三個消耗性內購商品，識別碼與價格依 spec 第 5 節：`com.shinrenpan.sidebell.tip.small`（US$0.99）、`…tip.medium`（US$2.99）、`…tip.large`（US$8.99），各填寫繁中與英文的顯示名稱與描述。驗證：三個商品的狀態皆為「準備提交」或更後續的狀態；**且商品 ID 與 `SponsorshipProduct` 的 rawValue 逐字相同**（見 2.3 的補記）。
 - [x] 1.3 **開發者操作**：於 RevenueCat 主控台建立專案、串接 App Store Connect 的 App 專用共用密鑰，並確認三個商品可被 RevenueCat 讀取。驗證：RevenueCat 的商品列表出現三個品項。
-- [ ] 1.4 **開發者操作**：於 RevenueCat 主控台建立 **Test Store** 並取得其 `test_` 開頭的 API key，填入 `Config/Secrets.xcconfig`。Test Store（SDK 內部名 Simulated Store）把購買換成 SDK 自己彈的系統 alert，提供「購買／失敗／取消」三個結果，**完全不碰 App Store**——不需要沙盒帳號，商品也不必先過審。Release build 誤用 `test_` key 時 SDK 會自行跳警告擋下。驗證：以該 key 建置後開啟贊助頁，三個方案載入成功且點選後出現模擬購買 alert。
+- [x] 1.4 **開發者操作**：於 RevenueCat 主控台建立 **Test Store** 並取得其 `test_` 開頭的 API key，填入 `Config/Secrets.xcconfig`。Test Store（SDK 內部名 Simulated Store）把購買換成 SDK 自己彈的系統 alert，提供「購買／失敗／取消」三個結果，**完全不碰 App Store**——不需要沙盒帳號，商品也不必先過審。Release build 誤用 `test_` key 時 SDK 會自行跳警告擋下。驗證：以該 key 建置後開啟贊助頁，三個方案載入成功且點選後出現模擬購買 alert。
 
   > **補記（2026-08-13）**：Test Store 的 app 本身雖已存在，**底下卻沒有任何商品**——App Store 側的三個商品不會自動出現在 Test Store，兩者的商品目錄是各自獨立的。已透過 RevenueCat API 於 Test Store 補建三個 consumable（識別碼與 App Store 側逐字相同，價格 US$0.99／$2.99／$8.99 與 NT$30／$90／$290）。未補建之前，即使 `test_` key 填對了，`products()` 一樣回空陣列。
 
@@ -21,8 +21,8 @@
 ## 3. 贊助畫面
 
 - [x] 3.1 在 `Sources/Features/Sponsorship/` 建立四件套與 `SponsorshipMocks.swift`，列出三個方案與其在地化價格及用途說明，滿足 `Each option states what the money is for`。驗證：Preview 呈現三個方案；重複購買同一方案不受阻擋。
-- [ ] 3.2 依「贊助頁是唯一需要網路的畫面，且失敗要說清楚」實作載入失敗的呈現，滿足 `The support screen states plainly when it needs a network`：說明需要網路連線並提供重試，不顯示空清單或無限的載入狀態。驗證：關閉網路後開啟贊助頁，畫面明確說明並可重試。
-- [ ] 3.3 依「購買失敗分成「使用者取消」與「其他錯誤」」實作購買流程的結果處理，滿足 `Cancelling is not an error`：取消時靜默返回，其他失敗顯示可理解的說明並可重試，不顯示原始錯誤碼。驗證：沙盒環境下取消購買不出現任何錯誤訊息。
+- [x] 3.2 依「贊助頁是唯一需要網路的畫面，且失敗要說清楚」實作載入失敗的呈現，滿足 `The support screen states plainly when it needs a network`：說明需要網路連線並提供重試，不顯示空清單或無限的載入狀態。驗證：關閉網路後開啟贊助頁，畫面明確說明並可重試。
+- [x] 3.3 依「購買失敗分成「使用者取消」與「其他錯誤」」實作購買流程的結果處理，滿足 `Cancelling is not an error`：取消時靜默返回，其他失敗顯示可理解的說明並可重試，不顯示原始錯誤碼。驗證：沙盒環境下取消購買不出現任何錯誤訊息。
 - [x] 3.4 於 `Sources/Features/RoleSettings/` 三件套加入「支持開發者」入口與感謝徽章，並在 `Sources/App/AppRouter.swift` 加入開啟贊助頁的轉場，滿足 `The support screen is reachable only from the caregiver side` 與 `Thanks is decoration, not a benefit`。驗證：以 grep 確認 `Sources/Features/PatientGrid/` 與 `Sources/Features/PatientHome/` 不含任何贊助相關識別字；患者端設定畫面無此入口。
 - [x] 3.5 依 W5（`add-localization`）建立的流程處理本 change 新增的所有使用者可見字串：字面值一律**英文**且直接寫在 `Text()` 或 `String(localized:)` 內（不得把字串當參數傳給自訂函式，那樣擷取不到），建置後以 `xcrun xcstringstool sync Sources/Resources/Localizable.xcstrings --stringsdata <DerivedData 下每個 .stringsdata>` 併回 catalog，再補繁中翻譯。價格**不自行格式化**，一律使用 App Store 提供的在地化價格字串。驗證：`Localizable.xcstrings` 的 stale 數為 0、缺翻譯數為 0；以 grep 確認 `Sources/Features/Sponsorship/` 與 `Sources/Core/Sponsorship/` 無中文字面值（註解與 `#Preview` 名稱除外）。
 
@@ -33,6 +33,6 @@
 ## 5. 驗證
 
 - [x] 5.1 建立 `docs/device-verification/w6-sponsorship.md`，涵蓋沙盒帳號的購買流程、重複購買、取消購買、無網路時的呈現、患者端無入口、購買後功能完全不變、以及離線時徽章仍顯示，每項含前置條件、步驟、預期結果、實際結果與 OS 版本欄位。驗證：文件涵蓋本 change 全部實機驗收項目，逐項可獨立執行。
-- [ ] 5.2 以 **Test Store** 執行並記錄購買驗證：三個方案各購買一次、重複購買同一方案、中途取消、以及模擬失敗。驗證：清單中填入實際結果與 OS 版本；「購買成功」的判準以 App 內徽章出現為準。
+- [x] 5.2 以 **Test Store** 執行並記錄購買驗證：三個方案各購買一次、重複購買同一方案、中途取消、以及模擬失敗。驗證：清單中填入實際結果與 OS 版本；「購買成功」的判準以 App 內徽章出現為準。
 - [ ] 5.4 **送審前**以沙盒帳號跑一次真實的 StoreKit 路徑：三個方案各購買一次並確認 RevenueCat 主控台收到交易。Test Store 驗的是我們自己的判斷與接線，**驗不到 App Store 那一側**——付費 App 協議未生效、商品未在該地區上架、銀行資訊不全，這些只有真實路徑才會現形，而它們的錯誤訊息不會指出真正的原因。驗證：三筆交易出現在 RevenueCat 主控台；清單中填入實際結果。
-- [ ] 5.3 執行並記錄約束驗證：關閉網路後確認呼叫、警報、確認閉環完全不受影響；患者端全畫面無任何購買入口或價格；購買後再次確認所有功能與購買前相同。驗證：清單中填入實際結果。
+- [x] 5.3 執行並記錄約束驗證：關閉網路後確認呼叫、警報、確認閉環完全不受影響；患者端全畫面無任何購買入口或價格；購買後再次確認所有功能與購買前相同。驗證：清單中填入實際結果。
