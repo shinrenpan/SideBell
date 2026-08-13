@@ -53,51 +53,52 @@ code:
 ---
 ### Requirement: A first launch is seeded with four default items
 
-The system SHALL create four items the first time the grid is used: drinking water, turning over, toilet, and feeling unwell. Seeding SHALL happen once — an empty grid on a later launch SHALL NOT be re-seeded.
+The system SHALL create two items the first time the grid is used: one protected item for distress, and one for drinking water. Seeding SHALL happen once.
 
-An empty grid on first use would mean the device is unusable until a caregiver configures it, and configuration happens in a screen that does not exist yet at that moment.
+Four defaults assumed needs on the caregiver's behalf — turning over is useless to a patient who can walk, and the needs that matter most to a given household (changing a nappy, suctioning) were never among them. Two is the smallest set that leaves the device usable on arrival: one guaranteed way to call for help, and one ordinary need that shows what a cell looks like. The rest is for the caregiver to add.
+
+The grid can no longer become empty, because the protected item cannot be deleted.
 
 #### Scenario: First launch creates the defaults
 
 - **WHEN** the grid is opened on a device with no stored items and no prior seeding
-- **THEN** four items SHALL exist: 喝水, 翻身, 洗手間, 不舒服
+- **THEN** two items SHALL exist: a protected item for distress, and one for drinking water
+- **AND** the protected item SHALL be first
 
-#### Scenario: Deliberately emptied grid stays empty
+#### Scenario: The grid cannot be emptied
 
-- **WHEN** every item has been removed and the app is launched again
-- **THEN** the grid SHALL remain empty and SHALL NOT be re-seeded
+- **WHEN** the caregiver deletes every item that can be deleted
+- **THEN** the protected item SHALL remain
+- **AND** the patient SHALL still have a way to call for help
 
 
 <!-- @trace
-source: add-patient-grid
-updated: 2026-08-11
+source: add-grid-editing
+updated: 2026-08-13
 code:
-  - Sources/Core/Transport/CallTransport.swift
-  - Sources/Core/CallCenter.swift
-  - Sources/App/AppRouter.swift
+  - Sources/Resources/Localizable.xcstrings
+  - Sources/Features/RoleSettings/RoleSettingsViewModel+Models.swift
   - Sources/Core/Persistence/GridItemModel.swift
-  - Sources/Core/Persistence/GridItemStore.swift
-  - Sources/Features/PatientGrid/PatientGridView.swift
-  - Sources/Core/Delivery/CallDelivery.swift
-  - Sources/App/AppDelegate.swift
-  - docs/device-verification/w3-patient-grid.md
-  - Sources/Features/PatientGrid/PatientGridMocks.swift
-  - Sources/Core/Delivery/PendingCall.swift
-  - Sources/Core/Transport/BLE/BLETransport.swift
-  - Tests/CallCenterTests/CallCenterLifecycleTests.swift
-  - Sources/Core/Feedback/CallFeedback.swift
+  - Tests/GridEditingTests/GridEditingStateTests.swift
   - Tests/PatientGridTests/PatientGridLayoutTests.swift
-  - Sources/Features/PatientGrid/PatientGridViewModel+Models.swift
-  - Sources/Features/PatientGrid/PatientGridViewModel.swift
-  - Tests/DeliveryTests/CallDeliveryTests.swift
-  - Sources/Features/PatientGrid/PatientGridHostController.swift
-  - DECISIONS.md
-  - Sources/Features/PatientHome/PatientHomeContainer.swift
-  - Sources/Core/Persistence/SideBellModelContainer.swift
+  - Sources/Features/GridEditing/GridEditingViewModel+Models.swift
+  - Sources/Features/GridEditing/GridEditingViewModel.swift
   - Tests/PersistenceTests/GridItemStoreTests.swift
-  - Sources/App/Info.plist
-  - Tests/TransportTests/TransportEventFanOutTests.swift
-  - Sources/Core/Speech/CallAnnouncer.swift
+  - docs/device-verification/w7-grid-editing.md
+  - Sources/Features/GridEditing/GridEditingMocks.swift
+  - Sources/Features/RoleSettings/RoleSettingsView.swift
+  - Sources/Features/PatientGrid/PatientGridViewModel+Models.swift
+  - Sources/Features/GridEditing/GridEditingView.swift
+  - Sources/Features/PatientGrid/PatientGridViewModel.swift
+  - Sources/Features/PatientGrid/PatientGridHostController.swift
+  - Sources/Features/RoleSettings/RoleSettingsViewModel.swift
+  - Sources/Features/RoleSettings/RoleSettingsHostController.swift
+  - docs/device-verification/w3-patient-grid.md
+  - Sources/Features/PatientGrid/PatientGridView.swift
+  - Sources/Core/Persistence/GridItemStore.swift
+  - Sources/Features/GridEditing/GridEditingHostController.swift
+  - Sources/App/AppRouter.swift
+  - DECISIONS.md
 -->
 
 ---
