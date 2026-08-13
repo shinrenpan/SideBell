@@ -54,19 +54,17 @@ extension CallNotifier {
         let content = UNMutableNotificationContent()
         content.title = message.title
         content.body = peerName
-        // 通知用**專屬的音檔**，不與 App 自己播放的那個共用：`Alert.caf` 為了
-        // 循環而內含 3.5 秒靜音尾巴，那對只播一次的通知毫無意義；而通知音效
-        // 由系統播放，用最保守的規格（22050Hz、1.5 秒）可避免相容性問題。
+        // 用**系統預設音效**，不用自訂音檔。
         //
-        // 這條路徑在深層背景下特別重要：App 被 suspend 後 `AVAudioPlayer`
-        // 未必拿得到執行機會（2026-08-12 的 B3 實測），而系統播放的通知音
-        // 不受此限。代價是非靜音時可能聽到兩種聲音——警報寧可重複也不要漏。
+        // 這條路徑在深層背景下特別重要：App 被 suspend 後音訊工作階段會被
+        // 系統拆除，`AVAudioPlayer` 未必發得出聲（2026-08-13 的 B3 log），
+        // 而通知音由系統播放，不受此限。它是警報失效時的最後一道聲音。
         //
-        // ⚠️ iOS 對不合規的自訂音檔是靜默失敗：不會退回預設音效，而是完全
-        // 不播。因此這個檔案的格式一旦更動，必須在實機上重新確認通知仍出聲。
-        content.sound = UNNotificationSound(
-            named: UNNotificationSoundName("AlertNotification.caf")
-        )
+        // 既然是最後一道，就不該冒任何風險。自訂音檔（`AlertNotification.caf`，
+        // 規格檢查過是合規的 Linear PCM）在 B3 實測中完全沒出聲，而前一天用
+        // 系統預設時聽得到——換句話說**自訂音檔這條路目前無法證明可靠**。
+        // 辨識度換不到這個。系統預設是已知可用的基準，就用它。
+        content.sound = .default
 
         let request = UNNotificationRequest(
             identifier: message.id.uuidString,

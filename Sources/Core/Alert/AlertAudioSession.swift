@@ -47,7 +47,7 @@ extension AlertAudioSession {
 
         let session = AVAudioSession.sharedInstance()
         do {
-            try session.setCategory(.playback, mode: .default, options: Self.options(for: session))
+            try session.setCategory(.playback, mode: .default, options: Self.categoryOptions)
             try session.setActive(true)
         } catch {
             // 設定失敗不阻斷角色進入：語音與震動仍可用，本地通知也仍會送出。
@@ -72,16 +72,21 @@ extension AlertAudioSession {
         guard isActive else { return }
         do {
             let session = AVAudioSession.sharedInstance()
-            // 每次都重新決定選項：其他 App 是否正在播放會變，而那個答案
-            // 決定了我們能用哪一種模式。見 `options(for:)`。
-            //
-            // 但**只在選項確實改變時才寫回**：`setCategory` 會重建音訊路由，
+            // **只在設定確實不符時才寫回**：`setCategory` 會重建音訊路由，
             // 而重建會吃掉開頭幾個音框。實測（2026-08-12）症狀是第一次播放
             // 只聽到「嗚」的半聲，第二次起才完整——警報的第一聲正是最需要
             // 完整的那一聲。
-            let desired = Self.options(for: session)
-            if session.categoryOptions != desired {
-                try session.setCategory(.playback, mode: .default, options: desired)
+            //
+            // 長時間背景後系統會把工作階段連同類別一起拆掉，那時這裡就是
+            // 重新設定的地方；平常則什麼都不做。
+            //
+            // 比對用**包含**而非相等：系統會自行補上我們沒要求的旗標——實測
+            // （2026-08-13）設定 `.duckOthers`（2）之後讀回來是 3，因為 duck
+            // 隱含 `.mixWithOthers`（1）。用相等比對會每次都判定不符，於是
+            // 每則呼叫都重建一次路由，正是上面要避免的事。
+            if session.category != .playback
+                || !session.categoryOptions.isSuperset(of: Self.categoryOptions) {
+                try session.setCategory(.playback, mode: .default, options: Self.categoryOptions)
             }
             try session.setActive(true)
             // ⚠️ 暫時的診斷輸出（2026-08-12，長時間背景後無警報聲），定位後移除。
@@ -126,25 +131,26 @@ extension AlertAudioSession {
 // MARK: - 私有
 
 private extension AlertAudioSession {
-    /// 依「當下有沒有別的 App 在播音訊」決定音訊類別的選項。
+    /// 音訊類別的選項。**恆為 `.duckOthers`，不看當下有沒有別人在播。**
     ///
-    /// 唯一有實據的約束是這條：**iOS 不允許背景 App 中斷前景 App 的音訊**。
-    /// 別人正在播時若用獨佔模式，`setActive` 會直接回
-    /// `AVAudioSessionErrorCodeCannotInterruptOthers`（實測取得的錯誤碼），
-    /// 結果是完全無聲。`.duckOthers` 不觸發這條規則——它把對方壓低而不是
-    /// 停掉，因此在背景仍被允許。
+    /// 約束是這條：**背景 App 不得啟用會中斷他人的音訊工作階段**。獨佔模式
+    /// （空選項）就屬於這一類，`setActive` 會回
+    /// `AVAudioSessionErrorCodeCannotInterruptOthers`（`560557684`），結果是
+    /// 完全無聲。`.duckOthers` 隱含混音，不觸發這條規則。
     ///
-    /// 所以：**有人在播就 duck，沒人在播就獨佔**。後者只是在沒有競爭時取
-    /// 最單純的設定，不是為了突破什麼。
+    /// 一度依 `isOtherAudioPlaying` 分流「有人在播就 duck，沒人在播就獨佔」。
+    /// **那是錯的**（2026-08-13 由裝置 log 推翻）：這條規則管的是 App 在不在
+    /// 背景，不是有沒有人在播。長時間背景後工作階段已被系統拆除，重新啟用
+    /// 時就會撞上——而 `isOtherAudioPlaying` 此時是 false，正好選到獨佔模式。
+    /// 實測 B3（背景八小時後收到呼叫）四次全部無聲，log 每次都是那個錯誤碼。
     ///
-    /// ⚠️ 本註解原本還宣稱「`.duckOthers` 會讓我們降級為次要音訊，因而重新
-    /// 受靜音開關管轄」。**那是誤判**（2026-08-12 推翻）：當時觀察到的無聲
-    /// 其實是 App 播完音檔就被凍結，與靜音開關和混音降級都無關。改為循環
-    /// 播放後，靜音 ＋ 背景 ＋ 對方正在播音樂的組合照樣持續出聲。
-    /// 完整推導見 `DECISIONS.md` 2026-08-12。
-    nonisolated static func options(for session: AVAudioSession) -> AVAudioSession.CategoryOptions {
-        session.isOtherAudioPlaying ? [.duckOthers] : []
-    }
+    /// 短時間背景測不出來：工作階段沒被拆過，`setActive(true)` 對已啟用的
+    /// 階段是 no-op，不會走到啟用判定。
+    ///
+    /// duck 沒有代價：`.playback` 類別本身就不受靜音開關管轄，混音與否不改變
+    /// 這件事（2026-08-12 實測，靜音 ＋ 背景 ＋ 對方正在播音樂仍持續發聲）。
+    /// 完整推導見 `DECISIONS.md` 2026-08-12、2026-08-13。
+    static let categoryOptions: AVAudioSession.CategoryOptions = [.duckOthers]
 
     /// 來電或鬧鐘會中斷我們的音訊，且**中斷結束後系統不會自動恢復**。
     /// 不處理的後果：照顧者接了一通電話，講完之後那則還沒確認的緊急呼叫
