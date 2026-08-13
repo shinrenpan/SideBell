@@ -1,0 +1,682 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%@ to continue": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@以繼續"
+          }
+        }
+      }
+    },
+    "%@, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@，%@"
+          }
+        }
+      }
+    },
+    "Acknowledged": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已確認"
+          }
+        }
+      }
+    },
+    "Acknowledgement sent": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已送出確認"
+          }
+        }
+      }
+    },
+    "Bathroom": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "洗手間"
+          }
+        }
+      }
+    },
+    "Bluetooth is off. SideBell needs Bluetooth to connect. Please turn it on to continue.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "藍牙已關閉。SideBell 需要藍牙才能連線，請開啟後再繼續。"
+          }
+        }
+      }
+    },
+    "Calls": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "呼叫"
+          }
+        }
+      }
+    },
+    "Calls appear here after the patient taps a cell.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "患者按下格子後，呼叫會出現在這裡。"
+          }
+        }
+      }
+    },
+    "Calls can be sent right now": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前可以送出呼叫"
+          }
+        }
+      }
+    },
+    "Calls cannot be sent; the caregiver is out of range": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前無法送出呼叫，照顧者不在範圍內"
+          }
+        }
+      }
+    },
+    "Calls from the patient are coming through": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前收得到患者的呼叫"
+          }
+        }
+      }
+    },
+    "Calls from the patient cannot come through; the patient is out of range": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前收不到患者的呼叫，患者不在範圍內"
+          }
+        }
+      }
+    },
+    "Cancels if you do not tap again within three seconds": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "三秒內未再次按下即取消"
+          }
+        }
+      }
+    },
+    "Caregiver": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "照顧者端"
+          }
+        }
+      }
+    },
+    "Carry with you to receive calls": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隨身攜帶，接收患者的呼叫"
+          }
+        }
+      }
+    },
+    "Connected": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已連線"
+          }
+        }
+      }
+    },
+    "Current role": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前角色"
+          }
+        }
+      }
+    },
+    "Discomfort": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不舒服"
+          }
+        }
+      }
+    },
+    "Dismiss": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "關閉提示"
+          }
+        }
+      }
+    },
+    "Got it": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已收到"
+          }
+        }
+      }
+    },
+    "I understand the notice above": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已了解上述說明"
+          }
+        }
+      }
+    },
+    "Important notice. SideBell is a care assistance calling tool. It cannot replace emergency medical alert services. In an emergency, call your local emergency number. It works over Bluetooth, so its range is limited; it cannot send calls when the app is closed or the device runs out of battery.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重要說明。SideBell 是照護輔助呼叫工具，不能取代緊急醫療警報服務。遇到緊急狀況請撥打一一九，或當地緊急電話。本 App 透過藍牙運作，距離有限；App 被關閉或裝置沒電時無法傳送呼叫。"
+          }
+        }
+      }
+    },
+    "Keeps SideBell on the App Store for about a month.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "讓 SideBell 在 App Store 上多待約一個月。"
+          }
+        }
+      }
+    },
+    "Keeps SideBell on the App Store for about four days.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "讓 SideBell 在 App Store 上多待約四天。"
+          }
+        }
+      }
+    },
+    "Keeps SideBell on the App Store for about ten days.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "讓 SideBell 在 App Store 上多待約十天。"
+          }
+        }
+      }
+    },
+    "Leaves this role and returns to the home screen, where you can choose Patient or Caregiver again": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "離開目前角色並回到首頁，可重新選擇患者端或照顧者端"
+          }
+        }
+      }
+    },
+    "Loading…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "載入中…"
+          }
+        }
+      }
+    },
+    "More than three minutes have passed; the patient already sees no response": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已超過三分鐘，患者端已顯示無人回應"
+          }
+        }
+      }
+    },
+    "No calls yet": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前沒有呼叫"
+          }
+        }
+      }
+    },
+    "No response": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無人回應"
+          }
+        }
+      }
+    },
+    "Not available right now. %@": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前無法選擇。%@"
+          }
+        }
+      }
+    },
+    "Not connected": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未連線"
+          }
+        }
+      }
+    },
+    "Not selected": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未選擇"
+          }
+        }
+      }
+    },
+    "Opens the %@ screen": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟%@畫面"
+          }
+        }
+      }
+    },
+    "Patient": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "患者端"
+          }
+        }
+      }
+    },
+    "Please confirm the notice above before choosing a role.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請先確認上方說明，才能選擇角色。"
+          }
+        }
+      }
+    },
+    "Prices come from the App Store, so this is the only screen that needs to go online. Calls and alerts keep working without it.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "價格由 App Store 提供，因此這是全 App 唯一需要連網的畫面。呼叫與警報不受影響，沒有網路照樣運作。"
+          }
+        }
+      }
+    },
+    "Role": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "角色"
+          }
+        }
+      }
+    },
+    "Sends an acknowledgement so the patient knows someone responded": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "送出確認，患者會看到有人回應了"
+          }
+        }
+      }
+    },
+    "Set up beside the patient to send calls": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "架設在患者身邊，用來發出呼叫"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定"
+          }
+        }
+      }
+    },
+    "SideBell": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideBell 隨身鈴"
+          }
+        }
+      }
+    },
+    "SideBell is a care assistance calling tool. It cannot replace emergency medical alert services. In an emergency, call your local emergency number. It works over Bluetooth, so its range is limited; it cannot send calls when the app is closed or the device runs out of battery.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideBell 是照護輔助呼叫工具，不能取代緊急醫療警報服務。遇到緊急狀況請撥打 119 或當地緊急電話。本 App 透過藍牙運作，距離有限；App 被關閉或裝置沒電時無法傳送呼叫。"
+          }
+        }
+      }
+    },
+    "SideBell is free, and supporting it unlocks nothing. Every feature works the same either way.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SideBell 是免費的，支持不會解鎖任何東西。所有功能在支持前後完全一樣。"
+          }
+        }
+      }
+    },
+    "SideBell is not allowed to use Bluetooth. Open Settings > SideBell to grant permission.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚未允許 SideBell 使用藍牙。請到「設定 > SideBell」開啟藍牙權限。"
+          }
+        }
+      }
+    },
+    "Support the developer": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支持開發者"
+          }
+        }
+      }
+    },
+    "Supporting unlocks nothing. Every feature works the same either way.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支持不會解鎖任何東西。所有功能在支持前後完全一樣。"
+          }
+        }
+      }
+    },
+    "Switch role": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切換角色"
+          }
+        }
+      }
+    },
+    "Switching roles stops the current connection.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切換角色會停止目前的連線。"
+          }
+        }
+      }
+    },
+    "Takes two taps to run, so it cannot be triggered by accident": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要按兩次才會執行，以免誤觸"
+          }
+        }
+      }
+    },
+    "Tap again": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再按一次"
+          }
+        }
+      }
+    },
+    "Tap again to continue": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再按一次以繼續"
+          }
+        }
+      }
+    },
+    "Tap to send a call": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點一下送出呼叫"
+          }
+        }
+      }
+    },
+    "Thank you for your support": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "謝謝你的支持"
+          }
+        }
+      }
+    },
+    "The acknowledgement did not go through — the patient's device is unreachable. Move closer and try again.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認未送達——目前連不上患者的裝置，請靠近一點再試一次"
+          }
+        }
+      }
+    },
+    "The acknowledgement did not go through — the two devices have not finished Bluetooth pairing.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認未送達——兩台裝置尚未完成藍牙配對"
+          }
+        }
+      }
+    },
+    "The acknowledgement did not go through. Please try again.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認未送達，請再試一次"
+          }
+        }
+      }
+    },
+    "The purchase did not go through. Please try again.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "購買未完成，請再試一次。"
+          }
+        }
+      }
+    },
+    "These are one-time contributions. You can support again whenever you like.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每一筆都是獨立的支持，隨時可以再來一次。"
+          }
+        }
+      }
+    },
+    "This device does not support Bluetooth Low Energy, so SideBell cannot be used.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此裝置不支援藍牙低功耗，無法使用 SideBell。"
+          }
+        }
+      }
+    },
+    "This screen needs a network connection": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "這個畫面需要網路連線"
+          }
+        }
+      }
+    },
+    "Try again": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重試"
+          }
+        }
+      }
+    },
+    "Turn over": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻身"
+          }
+        }
+      }
+    },
+    "Waiting": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等待中"
+          }
+        }
+      }
+    },
+    "Water": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "喝水"
+          }
+        }
+      }
+    },
+    "You have supported the developer": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你已支持過開發者"
+          }
+        }
+      }
+    },
+    "You must confirm before choosing a role": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認後才能選擇角色"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

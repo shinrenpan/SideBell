@@ -1,0 +1,11 @@
+/* SideBell — Info.plist strings (English, base).
+
+   權限說明由系統在彈窗中呈現，不經過 App 的字串載入路徑，因此**不能**放進
+   String Catalog。漏掉的症狀是藍牙權限彈窗冒出中文——那是使用者看到的
+   第一個畫面之一。
+
+   這兩個 .lproj 目錄同時也向系統宣告 App 支援哪些語言。沒有這個宣告，
+   VoiceOver 會用 development language 的語音去唸其他語言的內容——實測後果
+   是中文內容被英文語音朗讀，連緊急電話號碼都會唸錯。
+ */
+"NSBluetoothAlwaysUsageDescription" = "SideBell uses Bluetooth to connect the patient's device and the caregiver's device directly, so calls can be delivered without an internet connection.";

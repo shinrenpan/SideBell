@@ -52,7 +52,10 @@ struct PatientGridView: View {
             // 設定入口需連續兩次點擊，擋住眼控誤觸——患者一旦離開這個畫面
             // 可能沒有能力自己回來。實際操作者是照顧者。
             ToolbarItem(placement: .topBarTrailing) {
-                TwoStepConfirmButton(idleTitle: "設定", confirmTitle: "再按一次") {
+                TwoStepConfirmButton(
+                    idleTitle: String(localized: "Settings"),
+                    confirmTitle: String(localized: "Tap again")
+                ) {
                     Task { await viewModel.doAction(.openSettings) }
                 }
             }
@@ -105,7 +108,7 @@ private extension PatientGridView {
         // 這段等待正是 Dwell Control 最需要安全感的時刻。
         .hoverEffect(.highlight)
         .accessibilityLabel(accessibilityLabel(item, state: state))
-        .accessibilityHint("點一下送出呼叫")
+        .accessibilityHint(Text("Tap to send a call"))
     }
 
     /// 狀態以符號與文字表達，顏色只是輔助——只靠顏色會排除色覺障礙者。
@@ -117,7 +120,11 @@ private extension PatientGridView {
                 .foregroundStyle(Self.stateColor(state))
         } else {
             // 佔位，避免有無狀態時格子高度跳動。
-            Text(" ")
+            //
+            // `verbatim:` 讓它不進 String Catalog：它是版面用的空白，不是文字。
+            // 不標的話 catalog 裡會多一條 `" "` 的待翻譯項目，而那條永遠不會有
+            // 翻譯，缺翻譯數就永遠歸不了零。
+            Text(verbatim: " ")
                 .font(.headline)
         }
     }
@@ -143,14 +150,22 @@ private extension PatientGridView {
                     ? "checkmark.circle.fill"
                     : "exclamationmark.circle.fill"
             )
-            Text(viewModel.state.isReachable ? "已連線" : "未連線")
+            // 兩個字面值各自寫在獨立的 `Text()` 裡，不寫成 `Text(cond ? A : B)`：
+            // 後者能不能被完整擷取取決於編譯器怎麼看待那個三元運算式，而漏抽
+            // 的代價是這一行對非繁中使用者變成中文——它正是患者判斷系統能不能
+            // 用的唯一依據。
+            if viewModel.state.isReachable {
+                Text("Connected")
+            } else {
+                Text("Not connected")
+            }
         }
         .font(.headline)
         .foregroundStyle(viewModel.state.isReachable ? Color.green : Color.orange)
         .accessibilityLabel(
             viewModel.state.isReachable
-                ? "目前可以送出呼叫"
-                : "目前無法送出呼叫，照顧者不在範圍內"
+                ? String(localized: "Calls can be sent right now")
+                : String(localized: "Calls cannot be sent; the caregiver is out of range")
         )
     }
 }
@@ -227,9 +242,9 @@ extension PatientGridView {
 private extension PatientGridView {
     static func stateText(_ state: CallState) -> String {
         switch state {
-        case .waiting: "等待中"
-        case .acknowledged: "已確認"
-        case .unanswered: "無人回應"
+        case .waiting: String(localized: "Waiting")
+        case .acknowledged: String(localized: "Acknowledged")
+        case .unanswered: String(localized: "No response")
         }
     }
 
@@ -251,6 +266,6 @@ private extension PatientGridView {
 
     func accessibilityLabel(_ item: PatientGridViewModel.GridItem, state: CallState?) -> String {
         guard let state else { return item.title }
-        return "\(item.title)，\(Self.stateText(state))"
+        return String(localized: "\(item.title), \(Self.stateText(state))")
     }
 }

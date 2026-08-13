@@ -1,0 +1,2 @@
+/* SideBell — Info.plist 字串（繁體中文）。說明見 en.lproj/InfoPlist.strings。 */
+"NSBluetoothAlwaysUsageDescription" = "SideBell 需要使用藍牙，在不需要網路的情況下即時連線患者與照顧者的裝置，傳送呼叫訊息。";

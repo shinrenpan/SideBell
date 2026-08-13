@@ -90,7 +90,11 @@ struct GridItemStoreTests {
     func seedsDefaultsOnFirstUse() throws {
         try store.seedDefaultsIfNeeded()
 
-        #expect(try store.allItems().map(\.title) == ["喝水", "翻身", "洗手間", "不舒服"])
+        // 以 `commandCode` 而非標題釘住內容：標題自本地化之後隨系統語言而定，
+        // 寫死任何一種語言都會讓這個測試在別的語言下失敗。`commandCode` 是
+        // 兩端對照用的識別碼，不翻譯，正是這裡該驗的東西。
+        #expect(try store.allItems().map(\.commandCode) == ["WATER", "TURN", "TOILET", "PAIN"])
+        #expect(try store.allItems().map(\.title) == GridItemStore.defaultItems.map(\.title))
     }
 
     /// spec: Deliberately emptied grid stays empty

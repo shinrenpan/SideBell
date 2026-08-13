@@ -24,8 +24,10 @@ final class CaregiverHomeContainer: UITabBarController {
                 onDidAppear: onDidAppear
             )
         )
+        // UIKit 不吃 `LocalizedStringKey`，字面值必須自己包進 `String(localized:)`，
+        // 否則編譯器擷取不到。
         calls.tabBarItem = UITabBarItem(
-            title: "呼叫",
+            title: String(localized: "Calls"),
             image: UIImage(systemName: "bell"),
             selectedImage: UIImage(systemName: "bell.fill")
         )
@@ -34,7 +36,7 @@ final class CaregiverHomeContainer: UITabBarController {
             rootViewController: RoleSettingsHostController(roleStore: roleStore)
         )
         settings.tabBarItem = UITabBarItem(
-            title: "設定",
+            title: String(localized: "Settings"),
             image: UIImage(systemName: "gearshape"),
             selectedImage: UIImage(systemName: "gearshape.fill")
         )

@@ -21,7 +21,7 @@ struct CaregiverCallsView: View {
                 emptyState
             }
         }
-        .navigationTitle("呼叫")
+        .navigationTitle("Calls")
         .task {
             await viewModel.doAction(.onAppear)
         }
@@ -82,7 +82,7 @@ private extension CaregiverCallsView {
             Text(call.pressedAt, style: .relative)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-                .accessibilityLabel("等待中")
+                .accessibilityLabel(Text("Waiting"))
         } else {
             Text(call.pressedAt, style: .time)
                 .font(.subheadline)
@@ -93,26 +93,26 @@ private extension CaregiverCallsView {
     @ViewBuilder
     func acknowledgeControl(_ call: CaregiverCallsViewModel.CallRow) -> some View {
         if call.isAcknowledged {
-            Label("已收到", systemImage: "checkmark.circle.fill")
+            Label("Got it", systemImage: "checkmark.circle.fill")
                 .labelStyle(.titleAndIcon)
                 .font(.subheadline.bold())
                 .foregroundStyle(.green)
-                .accessibilityLabel("已送出確認")
+                .accessibilityLabel(Text("Acknowledgement sent"))
         } else if call.isExpired {
             // 逾時後的確認送得出去，但患者端那格早已走完生命週期、顯示著
             // 「無人回應」，不會有任何變化。留著可按的按鈕，等於讓照顧者
             // 按完之後以為患者知道有人要來了。
-            Label("無人回應", systemImage: "xmark.circle.fill")
+            Label("No response", systemImage: "xmark.circle.fill")
                 .labelStyle(.titleAndIcon)
                 .font(.subheadline.bold())
                 .foregroundStyle(.secondary)
-                .accessibilityLabel("已超過三分鐘，患者端已顯示無人回應")
+                .accessibilityLabel(Text("More than three minutes have passed; the patient already sees no response"))
         } else {
-            Button("已收到") {
+            Button("Got it") {
                 Task { await viewModel.doAction(.acknowledge(call.id)) }
             }
             .buttonStyle(.borderedProminent)
-            .accessibilityHint("送出確認，患者會看到有人回應了")
+            .accessibilityHint(Text("Sends an acknowledgement so the patient knows someone responded"))
         }
     }
 }
@@ -136,7 +136,7 @@ private extension CaregiverCallsView {
             } label: {
                 Image(systemName: "xmark")
             }
-            .accessibilityLabel("關閉提示")
+            .accessibilityLabel(Text("Dismiss"))
         }
         .padding(12)
         .background(.orange.opacity(0.12), in: .rect(cornerRadius: 12))
@@ -153,9 +153,9 @@ private extension CaregiverCallsView {
     /// 資訊，而錯誤的告知比不告知更糟**。
     var emptyState: some View {
         ContentUnavailableView(
-            "目前沒有呼叫",
+            "No calls yet",
             systemImage: "bell.slash",
-            description: Text("患者按下格子後，呼叫會出現在這裡。")
+            description: Text("Calls appear here after the patient taps a cell.")
         )
         .frame(maxHeight: .infinity)
     }
@@ -171,14 +171,18 @@ private extension CaregiverCallsView {
                     ? "checkmark.circle.fill"
                     : "exclamationmark.circle.fill"
             )
-            Text(viewModel.state.isReachable ? "已連線" : "未連線")
+            if viewModel.state.isReachable {
+                Text("Connected")
+            } else {
+                Text("Not connected")
+            }
         }
         .font(.headline)
         .foregroundStyle(viewModel.state.isReachable ? Color.green : Color.orange)
         .accessibilityLabel(
             viewModel.state.isReachable
-                ? "目前收得到患者的呼叫"
-                : "目前收不到患者的呼叫，患者不在範圍內"
+                ? String(localized: "Calls from the patient are coming through")
+                : String(localized: "Calls from the patient cannot come through; the patient is out of range")
         )
     }
 }

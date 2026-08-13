@@ -28,11 +28,15 @@ struct TwoStepConfirmButton: View {
                 .font(.subheadline)
                 .foregroundStyle(isAwaitingConfirmation ? Color.orange : Color.secondary)
         }
-        .accessibilityLabel(isAwaitingConfirmation ? "\(confirmTitle)以繼續" : idleTitle)
+        .accessibilityLabel(
+            isAwaitingConfirmation
+                ? String(localized: "\(confirmTitle) to continue")
+                : idleTitle
+        )
         .accessibilityHint(
             isAwaitingConfirmation
-                ? "三秒內未再次按下即取消"
-                : "需要按兩次才會執行，以免誤觸"
+                ? Text("Cancels if you do not tap again within three seconds")
+                : Text("Takes two taps to run, so it cannot be triggered by accident")
         )
         .onDisappear {
             resetTask?.cancel()
@@ -57,7 +61,7 @@ private extension TwoStepConfirmButton {
 
         // 主動朗讀：視障使用者看不到標題換成確認文字，
         // 不通知的話會以為第一次點擊沒有作用。
-        UIAccessibility.post(notification: .announcement, argument: "再按一次以繼續")
+        UIAccessibility.post(notification: .announcement, argument: String(localized: "Tap again to continue"))
 
         resetTask?.cancel()
         resetTask = Task {

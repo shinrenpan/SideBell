@@ -138,15 +138,19 @@ private extension CaregiverCallsViewModel {
     /// 只有「靠近患者再試一次」或「檢查藍牙」，因此全部收斂到那幾句。
     nonisolated static func describe(_ error: Error) -> String {
         guard let transportError = error as? TransportError else {
-            return "確認未送達，請再試一次"
+            return String(localized: "The acknowledgement did not go through. Please try again.")
         }
         switch transportError {
         case .notConnected, .notStarted:
-            return "確認未送達——目前連不上患者的裝置，請靠近一點再試一次"
+            return String(
+                localized: "The acknowledgement did not go through — the patient's device is unreachable. Move closer and try again."
+            )
         case .writeRejected:
-            return "確認未送達——兩台裝置尚未完成藍牙配對"
+            return String(
+                localized: "The acknowledgement did not go through — the two devices have not finished Bluetooth pairing."
+            )
         case .roleMismatch, .encodingFailed:
-            return "確認未送達，請再試一次"
+            return String(localized: "The acknowledgement did not go through. Please try again.")
         }
     }
 }

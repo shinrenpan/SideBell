@@ -84,12 +84,26 @@ extension GridItemStore {
     }
 
     /// spec 2.1 的四個核心格子。
-    nonisolated static let defaultItems: [(title: String, commandCode: String, isUrgent: Bool)] = [
-        ("喝水", "WATER", false),
-        ("翻身", "TURN", false),
-        ("洗手間", "TOILET", false),
-        ("不舒服", "PAIN", true),
-    ]
+    ///
+    /// 標題在**種子當下**取得當時的系統語言，寫入資料庫後就不再變動——
+    /// 它們自此是照顧者的資料，不是介面文字。讓使用者資料隨系統語言變來
+    /// 變去比固定在一個語言更違反直覺：照顧者把「喝水」改成「喝溫水」之後，
+    /// 沒有人會期望切換語言時它變回英文。雙語家庭切換語言後格子仍是舊語言，
+    /// 那正是編輯功能存在的意義。
+    ///
+    /// 因此是計算屬性而非 `static let`：後者只在首次存取時求值一次並永久
+    /// 快取，與「取種子當下的語言」的語意不符。這個屬性只在種子路徑上被
+    /// 讀取，`allItems()` 走的是資料庫，不會重新翻譯。
+    ///
+    /// `commandCode` 不翻譯：它是給機器對照用的識別碼，兩端必須一致。
+    nonisolated static var defaultItems: [(title: String, commandCode: String, isUrgent: Bool)] {
+        [
+            (String(localized: "Water"), "WATER", false),
+            (String(localized: "Turn over"), "TURN", false),
+            (String(localized: "Bathroom"), "TOILET", false),
+            (String(localized: "Discomfort"), "PAIN", true),
+        ]
+    }
 }
 
 // MARK: - 私有
