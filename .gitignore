@@ -14,3 +14,6 @@ build/
 
 # macOS
 .DS_Store
+
+# 建置時注入的組態：實際值不進版控，範本是 Config/Secrets.example.xcconfig
+Config/Secrets.xcconfig

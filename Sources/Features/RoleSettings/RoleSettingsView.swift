@@ -5,20 +5,41 @@ struct RoleSettingsView: View {
 
     var body: some View {
         List {
-            Section("目前角色") {
-                LabeledContent("角色", value: roleText)
+            Section("Current role") {
+                LabeledContent("Role", value: roleText)
+            }
+
+            if viewModel.state.showsSponsorship {
+                Section {
+                    Button {
+                        Task { await viewModel.doAction(.openSponsorship) }
+                    } label: {
+                        LabeledContent {
+                            // 徽章是純裝飾，沒有任何功能掛在它上面。
+                            if viewModel.state.hasSupported {
+                                Image(systemName: "heart.fill")
+                                    .foregroundStyle(.pink)
+                                    .accessibilityLabel(Text("You have supported the developer"))
+                            }
+                        } label: {
+                            Text("Support the developer")
+                        }
+                    }
+                } footer: {
+                    Text("Supporting unlocks nothing. Every feature works the same either way.")
+                }
             }
 
             Section {
-                Button("切換角色", role: .destructive) {
+                Button("Switch role", role: .destructive) {
                     Task { await viewModel.doAction(.switchRole) }
                 }
-                .accessibilityHint("離開目前角色並回到首頁，可重新選擇患者端或照顧者端")
+                .accessibilityHint(Text("Leaves this role and returns to the home screen, where you can choose Patient or Caregiver again"))
             } footer: {
-                Text("切換角色會停止目前的連線。")
+                Text("Switching roles stops the current connection.")
             }
         }
-        .navigationTitle("設定")
+        .navigationTitle("Settings")
         .task {
             await viewModel.doAction(.onAppear)
         }
@@ -30,9 +51,9 @@ struct RoleSettingsView: View {
 private extension RoleSettingsView {
     var roleText: String {
         switch viewModel.state.role {
-        case .unselected: "未選擇"
-        case .patient: "患者端"
-        case .caregiver: "照顧者端"
+        case .unselected: String(localized: "Not selected")
+        case .patient: String(localized: "Patient")
+        case .caregiver: String(localized: "Caregiver")
         }
     }
 }

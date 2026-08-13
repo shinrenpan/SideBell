@@ -12,6 +12,8 @@ final class RoleSettingsHostController: UIHostingController<RoleSettingsView> {
             switch route {
             case .leaveRole:
                 AppRouter.shared.leaveRole(from: self)
+            case .sponsorship:
+                AppRouter.shared.openSponsorship(from: self)
             }
         }
     }

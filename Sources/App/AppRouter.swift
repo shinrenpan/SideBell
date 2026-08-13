@@ -84,6 +84,20 @@ extension AppRouter {
         )
         source.present(nav, animated: true)
     }
+
+    /// 開啟支持開發者。
+    ///
+    /// 推入堆疊而非以 sheet 呈現：它掛在照顧者端設定分頁的導覽堆疊上，
+    /// 而照顧者是有完整操作能力的使用者，返回鍵對他不是障礙。
+    ///
+    /// **患者端不存在到得了這裡的路徑**——入口本身只在角色為照顧者時出現。
+    func openSponsorship(from source: UIViewController) {
+        guard let navigationController = source.navigationController else {
+            assertionFailure("支持頁需要導覽堆疊")
+            return
+        }
+        navigationController.pushViewController(SponsorshipHostController(), animated: true)
+    }
 }
 
 // MARK: - 私有

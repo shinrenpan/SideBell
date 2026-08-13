@@ -37,6 +37,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        // 贊助的 SDK 只設定 API key，不連網、不查詢商品，因此放在最前面
+        // 不影響任何路徑的時間。**這裡刻意不 import RevenueCat**：SDK 的型別
+        // 只能出現在 `Sources/Core/Sponsorship/`，這是本片唯一的第三方依賴，
+        // 影響範圍要看得見。
+        SponsorshipConfiguration.configure()
+
         // 順序固定且不可調換：讀角色 → 建傳輸層 → 接消費者 → 啟動。
         // 三者都必須在任何場景啟動之前完成。
         let role = roleStore.role

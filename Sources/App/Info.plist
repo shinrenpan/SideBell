@@ -22,8 +22,11 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- RevenueCat 的 Public SDK Key，由 Config/Secrets.xcconfig 於建置時注入。 -->
+	<key>RevenueCatAPIKey</key>
+	<string>$(REVENUECAT_API_KEY)</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>SideBell 需要使用藍牙，在不需要網路的情況下即時連線患者與照顧者的裝置，傳送呼叫訊息。</string>
+	<string>SideBell uses Bluetooth to connect the patient&apos;s device and the caregiver&apos;s device directly, so calls can be delivered without an internet connection.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

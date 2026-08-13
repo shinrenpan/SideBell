@@ -12,6 +12,15 @@ options:
   developmentLanguage: en
   groupSortPosition: top
 
+packages:
+  # 專案的**第一個也是唯一一個**第三方依賴。引入的理由是 Shipaton 的參賽
+  # 要求（以 RevenueCat SDK 驅動至少一項 IAP），而不是技術上需要它。
+  # 影響以「型別不得洩漏出 Sources/Core/Sponsorship/」圈住，日後要換掉時
+  # 改動範圍明確。
+  RevenueCat:
+    url: https://github.com/RevenueCat/purchases-ios
+    from: "5.83.1"
+
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -30,6 +39,14 @@ targets:
     platform: iOS
     sources:
       - path: Sources
+    dependencies:
+      - package: RevenueCat
+        product: RevenueCat
+    # API key 由 xcconfig 注入，不寫進版控中的原始碼。缺檔時建置仍會成功，
+    # 只是 key 為空——見 `Config/Secrets.example.xcconfig`。
+    configFiles:
+      Debug: Config/Secrets.xcconfig
+      Release: Config/Secrets.xcconfig
     settings:
       base:
         PRODUCT_NAME: SideBell
@@ -42,6 +59,11 @@ targets:
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
         ENABLE_PREVIEWS: "YES"
+        # 讓編譯器擷取可本地化字串，產出 `.stringsdata` 供 String Catalog 同步。
+        # 沒開就只有舊的來源解析器在跑，而它只認得 `Text("字面值")`——
+        # `Button`／`Label`／`Section`／`String(localized:)` 全部看不到，
+        # 活著的字串會被整批標成 stale，照著清理就會刪掉真正在用的翻譯。
+        SWIFT_EMIT_LOC_STRINGS: "YES"
 
   SideBellTests:
     type: bundle.unit-test
