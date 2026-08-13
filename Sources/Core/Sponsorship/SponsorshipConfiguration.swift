@@ -12,8 +12,14 @@ enum SponsorshipConfiguration {
     /// 而該 xcconfig 不進版控（範本見 `Config/Secrets.example.xcconfig`）。
     private static let apiKeyInfoKey = "RevenueCatAPIKey"
 
-    /// Public SDK Key 的前綴。用來擋掉範本值與設定錯誤。
-    private static let apiKeyPrefix = "appl_"
+    /// 可接受的 API key 前綴。用來擋掉範本值與設定錯誤。
+    ///
+    /// - `appl_`：正式的 Apple 平台 Public SDK Key。
+    /// - `test_`：RevenueCat 的 **Test Store**（SDK 內部名為 Simulated Store）。
+    ///   購買流程改由 SDK 自己彈系統 alert，提供「購買／失敗／取消」三個結果，
+    ///   完全不碰 App Store——不需要沙盒帳號，也不需要商品先過審。
+    ///   Release build 誤用時 SDK 會自己跳警告擋下，因此這裡不必再判斷組態。
+    private static let apiKeyPrefixes = ["appl_", "test_"]
 }
 
 // MARK: - 初始化
@@ -59,8 +65,8 @@ private extension SponsorshipConfiguration {
 
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         guard
-            trimmed.hasPrefix(apiKeyPrefix),
-            trimmed.count > apiKeyPrefix.count,
+            let prefix = apiKeyPrefixes.first(where: { trimmed.hasPrefix($0) }),
+            trimmed.count > prefix.count,
             !trimmed.contains("YOUR_KEY_HERE")
         else { return nil }
 

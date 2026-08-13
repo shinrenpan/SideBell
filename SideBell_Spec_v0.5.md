@@ -148,7 +148,7 @@ CallMessage wire format(little-endian):
 
 > 決策紀錄:訂閱制(離線到期死角)→ 買斷制(gating 違背使命)→ **贊助制定案**。全功能永久免費,IAP 僅為使用者表達支持的管道,同時滿足 Shipaton「RevenueCat SDK 驅動至少一項 IAP」的參賽要求。
 
-- **商品**:Consumable 小費三級距——`tip.small` NT$30、`tip.medium` NT$90、`tip.large` NT$290(US$0.99 / $2.99 / $8.99)。可重複購買。
+- **商品**:Consumable 小費三級距——`com.shinrenpan.sidebell.tip.small` NT$30、`…tip.medium` NT$90、`…tip.large` NT$290(US$0.99 / $2.99 / $8.99)。可重複購買。識別碼一律寫完整的反向 DNS 全名:那是 App Store Connect 上實際登記的 product ID,也是 SDK 查詢商品時唯一認得的字串。
 - **入口**:僅照顧者端設定頁「支持開發者 ❤️」。患者端不出現任何購買 UI(眼控操作購買流程的疑慮就此消除)。
 - **贊助回饋**:純裝飾性——設定頁顯示「❤️ 感謝您的支持」徽章;`[v1.1]` 可加 app icon 變體。不得與任何功能掛鉤。
 - **無 entitlement gating**:App 內不存在功能解鎖判斷,離線憑證驗證問題不復存在。

@@ -42,7 +42,9 @@ App 內**不得出現任何形如「是否已贊助 → 給予某功能」的判
 
 ### 商品清單寫死在程式裡，不從遠端取得
 
-三個商品識別碼（`tip.small`、`tip.medium`、`tip.large`）以列舉定義於程式內，價格與在地化名稱則由 App Store 提供（RevenueCat 代為取得）。
+三個商品識別碼（`com.shinrenpan.sidebell.tip.small`、`…medium`、`…large`）以列舉定義於程式內，價格與在地化名稱則由 App Store 提供（RevenueCat 代為取得）。
+
+識別碼是**含 bundle ID 前綴的完整 product ID**，不是簡短的 `tip.small`。`Purchases.products(_:)` 收的是 App Store 的 product ID，前綴漏掉時 SDK 回傳空陣列，畫面會呈現「需要網路連線」——一個完全指不到真正原因的錯誤。這條路徑沒有任何自動測試能攔住（單元測試以假 store 驅動，不碰真實識別碼），只有真機或 Test Store 才會現形。
 
 不做遠端設定的商品清單：那需要一個後端，而本 App 沒有、也不打算有。商品變動時重新送審是可接受的成本——它們不會常變。
 
