@@ -189,6 +189,9 @@ private extension CaregiverCallsView {
 
 // MARK: - Preview
 
+// Preview 依賴 `#if DEBUG` 裡的 mock，因此自己也必須包起來——
+// 否則 Release build（archive／送審）會找不到 mock 而編譯失敗。
+#if DEBUG
 #Preview("有呼叫") {
     NavigationStack {
         CaregiverCallsView(viewModel: .mock)
@@ -200,3 +203,4 @@ private extension CaregiverCallsView {
         CaregiverCallsView(viewModel: .emptyMock)
     }
 }
+#endif

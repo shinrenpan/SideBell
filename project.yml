@@ -56,8 +56,12 @@ targets:
         # 1 = iPhone、2 = iPad。患者端眼控場景以 iPad 為主，
         # 照顧者端與觸控患者場景為 iPhone，兩者都必須支援。
         TARGETED_DEVICE_FAMILY: "1,2"
-        MARKETING_VERSION: "1.0"
+        MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"
+        # App 圖示。`Info.plist` 的 `CFBundleIconName` 引用這個值——
+        # 自訂 Info.plist 的專案不會自動注入該鍵，缺了它上傳會被
+        # App Store Connect 以 90713 擋下。
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_PREVIEWS: "YES"
         # 讓編譯器擷取可本地化字串，產出 `.stringsdata` 供 String Catalog 同步。
         # 沒開就只有舊的來源解析器在跑，而它只認得 `Text("字面值")`——
