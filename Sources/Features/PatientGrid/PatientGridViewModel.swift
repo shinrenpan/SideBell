@@ -42,6 +42,9 @@ final class PatientGridViewModel {
 
         case .openSettings:
             onRoute?(.openSettings)
+
+        case .reloadItems:
+            loadItems()
         }
     }
 }

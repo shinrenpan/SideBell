@@ -64,6 +64,60 @@ struct PatientGridLayoutTests {
         }
     }
 
+    // MARK: - 數量上限
+
+    /// spec: Adding stops at the limit, with the reason stated
+    ///
+    /// **硬上限是「一屏放得下」，不是建議值 6**（`DECISIONS.md` 2026-08-08）。
+    /// 6 來自外部無障礙指南，該文件自承未附實證來源，因此列為建議——用它硬擋
+    /// 等於拿一個沒把握的數字替照顧者做決定，而「逼他取捨」的原意是提示。
+    /// 真正有實證的約束是「緊急呼叫零捲動可達」，那個由一屏上限守住。
+    @Test("硬上限是一屏放得下的數量，可以超過建議值")
+    func hardLimitIsWhatFitsOnScreen() {
+        let fits =
+            PatientGridLayoutTests.fitCount(in: Self.iPadPortrait.width)
+            * PatientGridLayoutTests.fitCount(in: Self.iPadPortrait.height)
+
+        #expect(fits > PatientGridView.recommendedItemLimit)
+        #expect(PatientGridView.maxItemCount(in: Self.iPadPortrait) == fits)
+    }
+
+    @Test("小螢幕的上限低於建議值")
+    func limitOnSmallScreenIsBelowRecommendation() {
+        let tiny = CGSize(width: 200, height: 400)
+
+        #expect(PatientGridView.maxItemCount(in: tiny) < PatientGridView.recommendedItemLimit)
+        #expect(PatientGridView.maxItemCount(in: tiny) >= 1)
+    }
+
+    /// 上限內的格子數都排得出合格的寬度——上限若比版面算得出的還寬鬆，
+    /// 患者就會看到擠爛的格子。
+    @Test("上限內的每個格子數都排得出不低於下限的寬度")
+    func everyCountWithinLimitLaysOutLegibly() {
+        for size in [Self.iPadPortrait, Self.iPadLandscape, Self.iPhonePortrait] {
+            for itemCount in 1...PatientGridView.maxItemCount(in: size) {
+                let layout = PatientGridView.layout(itemCount: itemCount, in: size)
+                #expect(layout.cellHeight >= PatientGridView.minimumCellSide)
+            }
+        }
+    }
+
+    @Test("尺寸為零時仍給出至少一格的上限")
+    func limitDegeneratesSafely() {
+        #expect(PatientGridView.maxItemCount(in: .zero) == 1)
+    }
+
+    /// 與 `PatientGridView.fitCount` 同一組算式。那個是 private，
+    /// 這裡重算一次好驗「建議值真的比一屏塞得下的還小」。
+    private static func fitCount(in length: CGFloat) -> Int {
+        let available = length - PatientGridView.spacing * 2
+        guard available >= PatientGridView.minimumCellSide else { return 1 }
+        return Int(
+            (available + PatientGridView.spacing)
+                / (PatientGridView.minimumCellSide + PatientGridView.spacing)
+        )
+    }
+
     @Test("iPhone 直向的欄數少於 iPad 直向")
     func phoneUsesFewerColumnsThanPad() {
         let phone = PatientGridView.layout(itemCount: 4, in: Self.iPhonePortrait)

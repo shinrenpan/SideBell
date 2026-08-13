@@ -23,7 +23,16 @@ final class PatientGridHostController: UIHostingController<PatientGridView> {
             guard let self else { return }
             switch route {
             case .openSettings:
-                AppRouter.shared.openPatientSettings(from: self)
+                // 設定是 sheet，這個畫面在它底下不會 disappear，因此
+                // 關閉後 `onAppear` 不會再跑。項目變動要靠這條回報路徑
+                // 才會反映到格子上。
+                AppRouter.shared.openPatientSettings(from: self) { [weak self] callback in
+                    guard let self else { return }
+                    switch callback {
+                    case .gridItemsDidChange:
+                        await viewModel.doAction(.reloadItems)
+                    }
+                }
             }
         }
     }

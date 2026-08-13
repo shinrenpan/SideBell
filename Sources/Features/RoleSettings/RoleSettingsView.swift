@@ -30,6 +30,18 @@ struct RoleSettingsView: View {
                 }
             }
 
+            if viewModel.state.showsGridEditing {
+                Section {
+                    Button {
+                        Task { await viewModel.doAction(.openGridEditing) }
+                    } label: {
+                        Text("Edit call items")
+                    }
+                } footer: {
+                    Text("Add what this household actually needs. Changes appear on the grid right away.")
+                }
+            }
+
             Section {
                 Button("Switch role", role: .destructive) {
                     Task { await viewModel.doAction(.switchRole) }

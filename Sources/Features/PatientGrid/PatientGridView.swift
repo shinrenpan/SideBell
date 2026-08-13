@@ -188,6 +188,32 @@ extension PatientGridView {
         let cellHeight: CGFloat
     }
 
+    /// 建議的格子數上限。**超過只提示，不擋**。
+    ///
+    /// 外部無障礙指南以視覺疲勞為由建議不超過 6 個選項，而患者每多一格，
+    /// 每次尋找目標的掃描成本都會上升。但該數字未附實證來源
+    /// （`DECISIONS.md` 2026-08-08），拿它硬擋等於用一個沒把握的數字替照顧者
+    /// 決定他家裡需要幾個項目——而他才是知道患者需要什麼的人。
+    static let recommendedItemLimit = 6
+
+    /// 這台裝置最多能放幾格——**硬上限，超過就擋**。
+    ///
+    /// 判準是「一屏放得下」，因為真正有實證的約束是**緊急呼叫必須零捲動可達**：
+    /// 患者按「不舒服」的那一刻是整個產品摩擦成本最不能容忍的時刻，那一格若被
+    /// 擠出視野，他要凝視箭頭、等捲動、重新視覺搜尋、再凝視目標——而眼控的
+    /// 注視穩定度會隨身體狀況下降，偏偏身體狀況差正是他要按那一格的原因。
+    static func maxItemCount(in size: CGSize) -> Int {
+        max(1, fitCount(in: size.width) * fitCount(in: size.height))
+    }
+
+    /// 一條邊上放得下幾格：`n` 格需要 `n × 邊長 + (n - 1) × 間距`，
+    /// 且兩側各留一個間距——與 `layout(itemCount:in:)` 用的是同一組常數。
+    private static func fitCount(in length: CGFloat) -> Int {
+        let available = length - spacing * 2
+        guard available >= minimumCellSide else { return 1 }
+        return Int((available + spacing) / (minimumCellSide + spacing))
+    }
+
     /// 從可用空間反推最佳排列。
     ///
     /// 評分用**格子的短邊**而非面積：眼控命中的難度由最窄的那一邊決定，

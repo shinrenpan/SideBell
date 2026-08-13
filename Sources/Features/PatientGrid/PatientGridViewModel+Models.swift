@@ -25,6 +25,12 @@ extension PatientGridViewModel {
         case onDisappear
         case trigger(UUID)
         case openSettings
+        /// 重新讀取格子內容。
+        ///
+        /// 設定是以 **sheet** 呈現的，這個畫面在它底下**從來沒有 disappear 過**，
+        /// 因此 sheet 關閉後 `onAppear` 不會再跑。照顧者在編輯畫面改完項目後，
+        /// 要靠這個動作才看得到結果——少了它，他會以為自己的新增沒有生效。
+        case reloadItems
     }
 }
 

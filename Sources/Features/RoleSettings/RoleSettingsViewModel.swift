@@ -13,6 +13,8 @@ final class RoleSettingsViewModel {
     /// 任何金流型別。
     @ObservationIgnored private let sponsorship: any SponsorshipProviding
     @ObservationIgnored var onRoute: (@MainActor (Router) -> Void)?
+    /// 回報給呈現這一頁的畫面。目前只有患者端用得到——它需要知道格子變了。
+    @ObservationIgnored var onCallback: (@MainActor (Callback) async -> Void)?
 
     init(roleStore: RoleStore, sponsorship: any SponsorshipProviding = SponsorshipStore()) {
         self.roleStore = roleStore
@@ -31,6 +33,12 @@ final class RoleSettingsViewModel {
 
         case .openSponsorship:
             onRoute?(.sponsorship)
+
+        case .openGridEditing:
+            onRoute?(.gridEditing)
+
+        case .gridItemsDidChange:
+            await onCallback?(.gridItemsDidChange)
         }
     }
 }

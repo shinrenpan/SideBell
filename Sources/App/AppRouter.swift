@@ -70,13 +70,19 @@ extension AppRouter {
     /// 以 sheet 呈現而非推入堆疊：患者端的導覽列是隱藏的（格子要佔滿全螢幕），
     /// 推入會需要為了返回而把導覽列叫回來，等於在患者的視線路徑上放一顆
     /// 返回按鈕——那正是要避免的東西。
-    func openPatientSettings(from source: UIViewController) {
+    func openPatientSettings(
+        from source: UIViewController,
+        onCallback: (@MainActor (RoleSettingsViewModel.Callback) async -> Void)? = nil
+    ) {
         guard let appDelegate else {
             assertionFailure("找不到 AppDelegate")
             return
         }
 
-        let settings = RoleSettingsHostController(roleStore: appDelegate.roleStore)
+        let settings = RoleSettingsHostController(
+            roleStore: appDelegate.roleStore,
+            onCallback: onCallback
+        )
         let nav = UINavigationController(rootViewController: settings)
         settings.navigationItem.leftBarButtonItem = UIBarButtonItem(
             systemItem: .close,
@@ -97,6 +103,39 @@ extension AppRouter {
             return
         }
         navigationController.pushViewController(SponsorshipHostController(), animated: true)
+    }
+
+    /// 開啟編輯呼叫項目。
+    ///
+    /// 推入患者端設定那個 sheet 的堆疊上。操作者是照顧者——他有完整的操作
+    /// 能力，返回鍵對他不是障礙；而入口本身在患者端設定裡，已被兩段確認
+    /// 保護著。
+    ///
+    /// **數量上限以視窗尺寸計算，不用 `source.view` 的尺寸**：這一頁自己是
+    /// 個 sheet，在 iPad 上比視窗窄得多，拿它去算會得出一個比患者實際看得到
+    /// 的格子數更低的上限。要問的是「患者的格子畫面放得下幾格」。
+    func openGridEditing(
+        from source: UIViewController,
+        onCallback: @escaping @MainActor (GridEditingViewModel.Callback) async -> Void
+    ) {
+        guard let appDelegate else {
+            assertionFailure("找不到 AppDelegate")
+            return
+        }
+        guard let navigationController = source.navigationController else {
+            assertionFailure("編輯頁需要導覽堆疊")
+            return
+        }
+
+        let size = source.view.window?.bounds.size ?? source.view.bounds.size
+        navigationController.pushViewController(
+            GridEditingHostController(
+                store: appDelegate.gridItemStore,
+                itemLimit: PatientGridView.maxItemCount(in: size),
+                onCallback: onCallback
+            ),
+            animated: true
+        )
     }
 }
 
