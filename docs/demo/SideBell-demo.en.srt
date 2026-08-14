@@ -1,0 +1,68 @@
+1
+00:00:00,000 --> 00:00:03,000
+Left: the caregiver's iPhone.
+Right: the patient's iPad.
+
+2
+00:00:03,000 --> 00:00:05,000
+One app, two roles.
+
+3
+00:00:05,000 --> 00:00:09,000
+The notice comes first: SideBell cannot replace
+emergency medical alert services.
+
+4
+00:00:09,000 --> 00:00:13,000
+Bluetooth is the only permission needed
+for the core function.
+
+5
+00:00:13,000 --> 00:00:16,000
+Caregiver on the left.
+Notifications let calls reach the lock screen.
+
+6
+00:00:16,000 --> 00:00:18,000
+Patient on the right.
+No account, no sign-up, no internet.
+
+7
+00:00:18,000 --> 00:00:21,000
+Connected over Bluetooth.
+Both indicators turn green.
+
+8
+00:00:21,000 --> 00:00:25,000
+The patient taps "Discomfort".
+[alert sound] [spoken aloud: Discomfort]
+
+9
+00:00:25,000 --> 00:00:27,000
+"Got it" — and the patient sees it acknowledged.
+They never have to wonder if they were heard.
+
+10
+00:00:27,000 --> 00:00:31,000
+A non-urgent call: "Water".
+[alert sound] [spoken aloud: Water]
+
+11
+00:00:31,000 --> 00:00:33,000
+Acknowledged again.
+Every step lands within two seconds.
+
+12
+00:00:33,000 --> 00:00:35,000
+Now the caregiver's phone
+goes to the background.
+
+13
+00:00:35,000 --> 00:00:39,000
+The patient calls again.
+[notification] [alert sound] [spoken aloud: Discomfort]
+
+14
+00:00:39,000 --> 00:00:43,000
+Tapping the notification opens the call.
+Acknowledged — without the app ever being on screen.
