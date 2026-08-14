@@ -119,6 +119,35 @@ RevenueCat 主控台收到交易。詳見 `device-verification/w6-sponsorship.md
 
 ---
 
+## B5. 商店截圖
+
+`./scripts/screenshots.sh` 產出 8 張（兩裝置 × 兩語言 × 兩角色）到
+`build/screenshots/`，尺寸直接就是規格要求的，不需要後製。
+
+| 需求 | 模擬器 | ASC 的 display type |
+|---|---|---|
+| iPhone 6.9" → 1320×2868 | iPhone 17 Pro Max | `APP_IPHONE_67` |
+| iPad 13" → 2064×2752 | iPad Pro 13-inch | `APP_IPAD_PRO_3GEN_129` |
+
+> Apple **沒有**為 6.9" 與 13" 開獨立的 display type，兩者併入上一代的集合。
+> 找不到 `APP_IPHONE_69` 是正常的，不要以為是 API 版本不對。
+
+### 四個會擋住你的坑（都已在腳本裡處理）
+
+1. **模擬器沒有 CoreBluetooth** — 連線狀態永遠是「未連線」、照顧者端清單永遠
+   空的。靠 `ScreenshotTransport`（`#if DEBUG` ＋ 啟動參數
+   `-SideBellScreenshotMode`）演出真實狀態。
+2. **通知權限對話框蓋住畫面** — 截圖模式跳過請求。若模擬器裡還有殘留的對話框，
+   `xcrun simctl erase <device>` 清掉。
+3. **切語言後格子仍是舊語言** — 那些是資料庫的種子資料，以第一次啟動時的語言
+   寫入。腳本每個語言前重裝 App 讓種子重新產生。
+4. **實機截圖尺寸對不上** — iPad 尤其：mini 的長寬比 0.657、13 吋是 0.75，
+   等比縮放會留下大片黑邊。用模擬器的原生解析度才對得上。
+
+> ⚠️ `ScreenshotTransport` 會**偽造「已連線」**，而「畫面說連著、實際送不出去」
+> 正是本產品最致命的失敗模式。它靠兩層保護：`#if DEBUG`（Release 編不到）
+> 與啟動參數（Debug 也要明確帶）。**改動啟動流程時要確認這兩層都還在。**
+
 ## C. 資源
 
 | # | 檢查 | 判準 |

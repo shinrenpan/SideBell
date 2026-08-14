@@ -38,7 +38,17 @@ extension AppRouter {
             // 請求會與藍牙權限擠在一起，而使用者此時還不知道通知要用來做什麼。
             //
             // 已決定過的使用者不會再看到系統彈窗，因此不必自行記錄是否問過。
-            appDelegate.callNotifier.requestAuthorization()
+            //
+            // 截圖模式跳過：系統彈窗會蓋住整個畫面，而商店截圖要呈現的是
+            // App 本身。這個分支只在 Debug 且帶啟動參數時成立。
+            #if DEBUG
+            let skipsPrompt = ScreenshotTransport.isEnabled
+            #else
+            let skipsPrompt = false
+            #endif
+            if !skipsPrompt {
+                appDelegate.callNotifier.requestAuthorization()
+            }
         }
 
         let container = makeContainer(for: role, appDelegate: appDelegate, callCenter: callCenter)

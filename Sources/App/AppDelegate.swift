@@ -48,7 +48,18 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         let role = roleStore.role
 
         // 暱稱尚無設定介面，傳 nil：照顧者端會顯示系統的藍牙裝置名稱。
-        let transport = BLETransport(nickname: nil)
+        //
+        // 截圖模式只在 Debug、且帶了啟動參數時才會走到——模擬器沒有
+        // CoreBluetooth，照實拍下來的畫面永遠是「未連線」與空清單，
+        // 而那是模擬器的限制，不是產品的樣子。詳見 `ScreenshotTransport`。
+        let transport: any CallTransport
+        #if DEBUG
+        transport = ScreenshotTransport.isEnabled
+            ? ScreenshotTransport()
+            : BLETransport(nickname: nil)
+        #else
+        transport = BLETransport(nickname: nil)
+        #endif
         let callCenter = CallCenter(transport: transport)
         self.callCenter = callCenter
 
