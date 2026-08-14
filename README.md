@@ -117,7 +117,8 @@ can be swapped and why the screenshot tooling can stand in for it.
 
 ## Development
 
-This project is spec-driven, managed with **Spectra**. Behaviour is written into
+This project is spec-driven, managed with
+[**Spectra**](https://github.com/kaochenlong/spectra-app). Behaviour is written into
 `openspec/specs/` before it is built; every change leaves a proposal, a design
 note, and a task list behind in `openspec/changes/archive/`. Twelve capability
 specs and seven archived changes are the result.
