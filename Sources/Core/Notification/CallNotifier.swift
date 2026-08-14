@@ -54,17 +54,27 @@ extension CallNotifier {
         let content = UNMutableNotificationContent()
         content.title = message.title
         content.body = peerName
-        // 用**系統預設音效**，不用自訂音檔。
+        // 用**自訂音效**，讓照顧者一聽就知道是患者在叫他。
         //
-        // 這條路徑在深層背景下特別重要：App 被 suspend 後音訊工作階段會被
-        // 系統拆除，`AVAudioPlayer` 未必發得出聲（2026-08-13 的 B3 log），
-        // 而通知音由系統播放，不受此限。它是警報失效時的最後一道聲音。
+        // 這條路徑一度改用系統預設：2026-08-13 的 B3 實測中自訂音檔完全沒出聲，
+        // 而前一天用系統預設聽得到，於是判定「自訂音檔無法證明可靠」。
+        // **那個判斷是誤判**——沒出聲的那次正是 B5 的冷啟動情境（App 被系統
+        // 回收後喚醒，音訊從未備妥），整個 App 的狀態本來就不正常，不能歸咎
+        // 於音檔。檔名、位置、格式、長度四項後來逐一查過都合規。
         //
-        // 既然是最後一道，就不該冒任何風險。自訂音檔（`AlertNotification.caf`，
-        // 規格檢查過是合規的 Linear PCM）在 B3 實測中完全沒出聲，而前一天用
-        // 系統預設時聽得到——換句話說**自訂音檔這條路目前無法證明可靠**。
-        // 辨識度換不到這個。系統預設是已知可用的基準，就用它。
-        content.sound = .default
+        // B5 修復後取捨也變了：警報音在冷啟動路徑同樣發得出來（2026-08-14
+        // 15:53 log），通知音因此從「唯一的聲音」退為第二道。既然不再是保底，
+        // 就該換回辨識度——系統預設的「叮」與其他 App 的通知一模一樣，
+        // 照顧者在口袋裡聽到不會知道那是患者在叫他。
+        //
+        // ⚠️ **已知的聽感問題**：`AlertNotification.caf` 是 1.5 秒，波形與
+        // `Alert.caf` 的有聲段相同——它就是警報音本身。而通知只在背景送出，
+        // 那時警報音必然同時在響，**兩者永遠重疊**，聽起來像疊音。實測
+        // （2026-08-14）判定可接受，但這代表自訂音目前換不到辨識度，只換到
+        // 混濁。要真正拿到辨識度，需要一個**與警報音不同**的音檔。
+        content.sound = UNNotificationSound(
+            named: UNNotificationSoundName("AlertNotification.caf")
+        )
 
         let request = UNNotificationRequest(
             identifier: message.id.uuidString,

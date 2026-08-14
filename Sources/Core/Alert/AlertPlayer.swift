@@ -22,10 +22,22 @@ final class AlertPlayer {
     /// 手機上關不掉的噪音，而唯一的解法是重開 App。寧可漏響也不要停不下來。
     private static let maximumRepeats = Int(AlertPolicy.timeout / AlertPolicy.repeatInterval) + 1
 
+    /// `Alert.caf` 的**有聲段**長度。整個音檔 5 秒，其中 0 → 1.5 秒是
+    /// 「嗚咿嗚咿」，1.5 → 5 秒是刻意留下的靜音（見 `startRepeating` 的說明）。
+    ///
+    /// 語音要排在這之後才播得出來。實測（2026-08-14）：一般呼叫的語音原本與
+    /// 音效同時觸發，整段被壓在嗚咿嗚咿底下——照顧者只聽得到警報，**不知道
+    /// 患者要什麼**。緊急呼叫沒有這個症狀純屬僥倖：它的語音由重複迴圈驅動，
+    /// 排在五秒後，正好落在靜音段。
+    private static let soundSegmentDuration: TimeInterval = 1.5
+
     private let announcer = CallAnnouncer()
     private let feedbackGenerator = UINotificationFeedbackGenerator()
     private var player: AVAudioPlayer?
     private var repeatTask: Task<Void, Never>?
+    /// 延後播報的語音。停止警報時必須連它一起取消，否則照顧者按下確認之後
+    /// 還會再聽到一次項目名稱——那會讓他以為確認沒有生效。
+    private var announceTask: Task<Void, Never>?
     /// 目前正在重複的那一則。用來讓 `startRepeating` 冪等——
     /// 見該方法的說明。
     private var repeatingID: UUID?
@@ -54,6 +66,7 @@ final class AlertPlayer {
 
     deinit {
         repeatTask?.cancel()
+        announceTask?.cancel()
     }
 }
 
@@ -133,6 +146,15 @@ extension AlertPlayer {
         player?.stop()
         player?.numberOfLoops = 0
         player?.currentTime = 0
+        // 兩者都要：`announcer.stop()` 中斷正在唸的那一句，取消 `announceTask`
+        // 才攔得住還在等待中、尚未開口的那一次。少了後者，照顧者按下確認之後
+        // 仍會被唸一次項目名稱——他會以為確認沒有生效。
+        //
+        // **不放進 `stopRepeating()`**：那個方法在 `startRepeating()` 開頭也會
+        // 被呼叫，而此時 `playOnce()` 剛排好第一次語音，取消掉就等於緊急呼叫
+        // 永遠聽不到第一句。
+        announceTask?.cancel()
+        announceTask = nil
         announcer.stop()
         endPlaybackBackgroundTask()
     }
@@ -145,8 +167,18 @@ private extension AlertPlayer {
     /// 耳機、可能把手機放在桌上、可能在另一個房間，沒有哪一個通道是可靠的。
     func emit(title: String) {
         playSound()
-        announcer.announce(title)
         feedbackGenerator.notificationOccurred(.warning)
+
+        // 語音延後到音效的有聲段之後，否則會被蓋掉（見 `soundSegmentDuration`）。
+        //
+        // 這段等待期間音檔仍在播（總長 5 秒），因此背景執行時間由 `playSound()`
+        // 申請的那一份涵蓋，不需要另外處理。
+        announceTask?.cancel()
+        announceTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(Self.soundSegmentDuration))
+            guard let self, !Task.isCancelled else { return }
+            announcer.announce(title)
+        }
     }
 
     /// 播放警報音，失敗時重新準備後再試一次。

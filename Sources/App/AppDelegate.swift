@@ -202,9 +202,23 @@ private extension AppDelegate {
         alertAudioSession.ensureActive()
 
         // 到達當下一律響一次，不論緊急與否——那是「有事情發生了」的提示。
-        // 之後要不要繼續響，由 refreshAlert 依政策決定。
         alertPlayer.playOnce(title: message.title)
-        refreshAlert()
+
+        // 之後要不要繼續響，由 refreshAlert 依政策決定——**但一般呼叫不能無
+        // 條件走這條路**。它不會進政策的集合（`AlertPolicy.register` 第一行就
+        // `guard message.isUrgent`），因此 `currentAlert` 是 nil，而 refreshAlert
+        // 的 nil 分支會 `stop()`，把上面剛開始的那一次播報掐掉。
+        //
+        // 實測（2026-08-14）症狀是「一般呼叫聽得到嗚咿嗚咿、聽不到語音」：
+        // 音效逃掉了（`AVAudioPlayer` 啟動有緩衝，stop 太快沒攔到），語音被攔下
+        // （`AVSpeechSynthesizer` 啟動較慢，正好被 `stopSpeaking` 抓到）。
+        // 照顧者因此聽得到警報，卻不知道患者要什麼。
+        //
+        // 也不能直接跳過：`playOnce` 已經停掉既有的重複，不重啟的話那則還沒
+        // 確認的緊急呼叫就再也不會響——那比漏一次語音嚴重得多。
+        if message.isUrgent || alertPolicy.currentAlert != nil {
+            refreshAlert()
+        }
 
         // 前景時畫面本身就是呈現，再送通知只會在螢幕上疊一層橫幅擋住清單。
         guard UIApplication.shared.applicationState != .active else { return }
