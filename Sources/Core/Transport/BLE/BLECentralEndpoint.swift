@@ -261,6 +261,9 @@ extension BLECentralEndpoint: @preconcurrency CBCentralManagerDelegate {
     /// 系統終止 App 後由 BLE 事件復活時，先交還既有連線再呼叫 didUpdateState。
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String: Any]) {
         let restored = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] ?? []
+        // 這一行是分辨「App 被回收後冷啟動」與「App 還活著」的唯一證據。
+        // 要在事後（隔夜、長時間放置）收 log 判讀時，得暫時提升為 `.error`：
+        // unified logging 預設不持久化 `.info`，即時看得到、事後收不到。
         SideBellLog.transport.info("central: 狀態還原，交還 \(restored.count) 個對端")
 
         for peripheral in restored {

@@ -75,6 +75,23 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         applyAlertReadiness(for: role)
 
+        // 背景啟動時立刻備妥警報，不等畫面。
+        //
+        // 前景啟動走的是另一條路：由照顧者畫面在呈現後呼叫
+        // `prepareCaregiverAlert()`，那是為了把 `setActive` 的成本移出角色切換
+        // 的路徑（見 `AlertAudioSession.activate()`）。但 App 被 BLE 事件於背景
+        // 喚醒時**畫面永遠不會出現**，於是那條路徑從來沒有備妥過音訊。
+        //
+        // 症狀是照顧者只收到通知音，緊急呼叫的「重複響到確認」完全不發生——
+        // 而他不會知道自己錯過了什麼。2026-08-13 23:52:43 的 log 是實證：冷啟動
+        // 後 54 毫秒收到呼叫，沒有「音訊就緒」那一行，`播放 started=false`，
+        // 最後落到「警報音重試仍失敗，僅剩語音與震動」。
+        //
+        // 背景啟動沒有畫面可卡，原本那個顧慮在這條路徑上不存在。
+        if application.applicationState == .background {
+            prepareCaregiverAlert()
+        }
+
         if let transportRole = role.transportRole {
             callCenter.start(as: transportRole)
         }
@@ -113,7 +130,13 @@ extension AppDelegate {
         }
     }
 
-    /// 備妥照顧者端的警報資源。由照顧者畫面在呈現後呼叫。
+    /// 備妥照顧者端的警報資源。
+    ///
+    /// 兩個呼叫點，對應兩種啟動方式：
+    /// - **前景啟動**：照顧者畫面在呈現後呼叫，把 `setActive` 的成本移出角色
+    ///   切換的路徑。
+    /// - **背景啟動**：`didFinishLaunching` 直接呼叫。被 BLE 事件喚醒時畫面
+    ///   不會出現，等它就等不到了。
     ///
     /// 冪等，重複呼叫不會有額外效果。
     func prepareCaregiverAlert() {
