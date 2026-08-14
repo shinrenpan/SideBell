@@ -16,6 +16,10 @@
 > 8/14 卻發現它回歸了，而且是使用者在日常使用中注意到的。**送審前重跑，不要
 > 相信勾勾。**
 
+> 📌 **這份清單自己也會有盲點。** 它寫成後第一次使用就漏掉了 A8（隱私清單）
+> ——那一項是人想起來的，不是清單抓到的，而且它足以讓上傳被拒。
+> **發現漏項就當場補進來**，否則下次還是會漏同一個。
+
 ---
 
 ## A. 建置與打包
@@ -32,6 +36,14 @@ archive 或上傳時才爆——也就是最沒有時間處理的時候。
 | A5 | **`CFBundleIconName` 有值** | `PlistBuddy -c 'Print :CFBundleIconName' <app>/Info.plist` | 自訂 `Info.plist` 的專案**不會自動注入**這個鍵，缺了它上傳被擋（錯誤碼 90713） |
 | A6 | **出口合規已申報** | `Info.plist` 有 `ITSAppUsesNonExemptEncryption` | 沒有的話每個 build 上傳後都要手動回答一次 |
 | A7 | **版本號與 build 號** | `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` | build 號重複會被 App Store Connect 拒收 |
+| A8 | **隱私清單存在且涵蓋所有 Required Reason API** | archive 後確認 `SideBell.app/PrivacyInfo.xcprivacy` 存在；比對程式碼實際用到的 API | 自 2024-05-01 起，**沒有宣告的 App 不被 App Store Connect 接受**（ITMS-91053）。本專案用 `UserDefaults`（四處），理由 `CA92.1` |
+
+> **A8 補充**：第三方 SDK 的宣告由 SDK 自己負責——RevenueCat 自帶
+> `PrivacyInfo.xcprivacy`，SPM 會打包進 `RevenueCat_RevenueCat.bundle/`，不必也
+> 不該在 App 的清單裡重複宣告。
+>
+> **新增依賴或改動儲存方式時要回頭看這一項。** 其餘 Required Reason 類別
+> （檔案時間戳、開機時間、磁碟空間、鍵盤）目前都沒用到，用了就要補宣告。
 
 ### 工具陷阱
 

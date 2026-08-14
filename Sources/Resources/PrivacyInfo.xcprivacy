@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+		追蹤：無。這個 App 沒有任何分析、廣告或跨 App 識別，也沒有可以拿來
+		追蹤的網域——除了 RevenueCat 的購買驗證之外，它不連任何伺服器。
+	-->
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+
+	<!--
+		收集的資料：無。
+
+		呼叫項目、角色、是否曾支持過，全部只存在使用者自己的裝置上；呼叫本身
+		走 BLE，從不經過伺服器。購買相關的資料由 RevenueCat SDK 收集，那在
+		它自己的 PrivacyInfo.xcprivacy 裡宣告（SPM 會一併打包），不重複宣告。
+	-->
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+
+	<!--
+		Required Reason API：只有 UserDefaults。
+
+		用在四處，全部是 App 讀寫自己的偏好設定：角色（RoleStore）、免責聲明
+		是否已確認（DisclaimerStore）、格子種子旗標（GridItemStore）、是否曾
+		支持過（SponsorshipStore）。因此理由是 CA92.1——存取的是本 App 自己的
+		資料，不與其他 App 或裝置共用。
+
+		其餘類別（檔案時間戳、開機時間、磁碟空間、鍵盤）都沒有用到。
+		新增依賴或改動儲存方式時要回頭檢查這份清單。
+	-->
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

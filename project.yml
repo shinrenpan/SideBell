@@ -58,8 +58,8 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         MARKETING_VERSION: "1.0.0"
         # build 號每次上傳都要遞增，重複會被 App Store Connect 拒收。
-        # build 1 已於 2026-08-14 上傳（不含冷啟動警報與一般呼叫語音的修復）。
-        CURRENT_PROJECT_VERSION: "2"
+        # 1、2 已於 2026-08-14 上傳：1 不含警報修復，2 缺 PrivacyInfo.xcprivacy。
+        CURRENT_PROJECT_VERSION: "3"
         # App 圖示。`Info.plist` 的 `CFBundleIconName` 引用這個值——
         # 自訂 Info.plist 的專案不會自動注入該鍵，缺了它上傳會被
         # App Store Connect 以 90713 擋下。
