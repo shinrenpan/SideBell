@@ -46,7 +46,7 @@ updated: 2026-08-06
 code:
   - CLAUDE.md
   - Sources/Core/Transport/CallMessage.swift
-  - SideBell_Spec_v0.5.md
+  - docs/archive/SideBell_Spec_v0.5.md
   - Sources/App/Info.plist
   - Sources/Features/TransportPoC/TransportPoCView.swift
   - Sources/Features/TransportPoC/TransportPoCViewModel.swift
@@ -105,7 +105,7 @@ updated: 2026-08-06
 code:
   - CLAUDE.md
   - Sources/Core/Transport/CallMessage.swift
-  - SideBell_Spec_v0.5.md
+  - docs/archive/SideBell_Spec_v0.5.md
   - Sources/App/Info.plist
   - Sources/Features/TransportPoC/TransportPoCView.swift
   - Sources/Features/TransportPoC/TransportPoCViewModel.swift
@@ -167,7 +167,7 @@ updated: 2026-08-06
 code:
   - CLAUDE.md
   - Sources/Core/Transport/CallMessage.swift
-  - SideBell_Spec_v0.5.md
+  - docs/archive/SideBell_Spec_v0.5.md
   - Sources/App/Info.plist
   - Sources/Features/TransportPoC/TransportPoCView.swift
   - Sources/Features/TransportPoC/TransportPoCViewModel.swift
@@ -216,7 +216,7 @@ updated: 2026-08-06
 code:
   - CLAUDE.md
   - Sources/Core/Transport/CallMessage.swift
-  - SideBell_Spec_v0.5.md
+  - docs/archive/SideBell_Spec_v0.5.md
   - Sources/App/Info.plist
   - Sources/Features/TransportPoC/TransportPoCView.swift
   - Sources/Features/TransportPoC/TransportPoCViewModel.swift

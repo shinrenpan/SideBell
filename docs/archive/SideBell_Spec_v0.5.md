@@ -1,5 +1,27 @@
 # SideBell 產品規格書 v0.5(BLE + 贊助制)
 
+> ## ⚠️ 這是歷史文件，不是現況
+>
+> 寫於 2026-08 開發**之前**，用途是啟動 SDD（spec-driven development）。
+> 內容已由實作與後續決策取代，**照它施工會做錯**。例如它寫著「預設 4 個
+> 核心格子」，而實際出貨是 2 個（W7 的決定，見 `DECISIONS.md`）。
+>
+> 現況請看：
+>
+> | 要找什麼 | 去哪裡 |
+> |---|---|
+> | 產品行為、技術架構 | `openspec/specs/`（9 份規格，共約 2,900 行） |
+> | 為什麼這樣決定 | `DECISIONS.md` 與各 change 的 `design.md` |
+> | 1.0 之後要做什麼 | `docs/roadmap.md` |
+> | 實機驗證結果 | `docs/device-verification/` |
+> | 送審流程 | `docs/release-checklist.md` |
+>
+> 保留它的理由只有一個：**看得到起點**。裡面的取捨推導（尤其 1.1 節「明確
+> 排除」為什麼不用 Multipeer、不自製眼控、不做訂閱制）解釋了這個產品為什麼
+> 長成現在的樣子，那是規格文件不會記錄的東西。
+>
+> 第 7 節的里程碑與第 9.1 節的時程已經過期，第 8 節的待討論清單多數已結案。
+
 > 目標:RevenueCat Shipaton 2026(2026/8/1–9/30 上架)。主攻 RevenueCat Peace Prize。
 > 本文件為粗略 spec,供 SDD session 逐項細化。標註 `[v2]` 者不在比賽 scope 內。
 > v0.3 變更:產品定名 SideBell / 隨身鈴(前名 EyeTalk,因 Google Play 同名交友 app 與 Gemini 競賽同名同題項目而棄用)。

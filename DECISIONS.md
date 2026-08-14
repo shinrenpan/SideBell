@@ -1,7 +1,10 @@
 # SideBell 決策紀錄
 
-> 每則一行：日期 + 決策 + 一句理由。spec 檔（`SideBell_Spec_v0.5.md`）不在此修改，由開發者另行改版。
-> 本檔只記錄 session 中新產生的決策；spec 內已載明的決策不重複抄錄。
+> 每則一行：日期 + 決策 + 一句理由。本檔只記錄 session 中新產生的決策；
+> 規格內已載明的不重複抄錄。
+>
+> **規格的真相來源是 `openspec/specs/`。** 開發前那份
+> `docs/archive/SideBell_Spec_v0.5.md` 已移入 archive，僅供追溯起點，不再更新。
 
 ## 2026-08-05
 
