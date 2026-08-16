@@ -120,10 +120,15 @@ DECISIONS.md     Cross-cutting decisions and what we learned the hard way
 
 ### Architecture
 
-MVVMC — Model, View, ViewModel, Coordinator. Every screen is four files: an
-`@Observable @MainActor final class` ViewModel with a single `doAction` entry
-point, a SwiftUI View that only sends actions, a `UIHostingController` that owns
-navigation, and mocks for previews.
+[**MVVMC**](https://github.com/shinrenpan/MVVMC) — four layers, one folder per
+screen:
+
+| | |
+|---|---|
+| **Models** | State, domain models, DTOs |
+| **View** | Pure SwiftUI. No navigation, no business logic — it only sends actions |
+| **ViewModel** | `@Observable @MainActor final class` with a single `doAction` entry point |
+| **HostController** | The UIKit bridge. Navigation is its only job |
 
 The transport layer sits behind a protocol, which is why the BLE implementation
 can be swapped and why the screenshot tooling can stand in for it.
