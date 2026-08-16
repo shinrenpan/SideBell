@@ -21,6 +21,19 @@ Built for people with ALS, severe motor impairment, or anyone recovering in bed
 
 **▶︎ [Watch it work](https://youtu.be/cQijN-efZqE)** (43s, two devices, no cuts)
 
+<table>
+<tr>
+<td align="center" valign="top">
+<img src="docs/images/patient-ipad.png" width="440" alt="Patient side on iPad: two large buttons, Discomfort and Water, with a green Connected indicator">
+<br><sub><b>Patient side</b> — beside the bed.<br>Large targets, one tap, no gestures.</sub>
+</td>
+<td align="center" valign="top">
+<img src="docs/images/caregiver-iphone.png" width="270" alt="Caregiver side on iPhone: a list of calls showing waiting and unanswered states">
+<br><sub><b>Caregiver side</b> — in their pocket.<br>Every call carries its own state.</sub>
+</td>
+</tr>
+</table>
+
 ## Why it exists
 
 A call bell beside the bed only helps if the caregiver is within earshot. A
