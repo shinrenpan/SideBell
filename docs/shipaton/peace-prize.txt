@@ -1,0 +1,30 @@
+SideBell is a call bell for people who cannot speak or move easily, and for the family members caring for them at home. It runs on two devices over Bluetooth: the patient taps a full-screen button on a tablet beside the bed, and the caregiver's phone raises an alarm and says out loud what is needed.
+
+The people it is built for cannot advocate for themselves. That is the problem, stated exactly: someone who cannot speak or move easily also cannot tell you that the current arrangement isn't working.
+
+WHO IT REACHES
+
+Not a large number, and it would be dishonest to imply otherwise. There is no path here to millions of users. There is a path to mattering a great deal in a few thousand households. A person with ALS in the middle stages. Someone recovering from a stroke. An elderly parent who has had a fall. And with each of them, the one family member trying to cook dinner while listening for a sound from the next room.
+
+WHAT CHANGES FOR THEM
+
+Before: shouting, banging on a wall, or waiting.
+
+After: a tap, and the caregiver's phone says "Water" out loud from their pocket. The patient's screen then shows whether the call was delivered and whether someone acknowledged it. For a person who cannot ask twice, not knowing whether you were heard is its own distress. Answering that was a design requirement, not a nicety.
+
+WHY IT CAN ACTUALLY BE ADOPTED
+
+Impact only counts if the thing reaches a home. Every barrier that usually stops assistive technology from getting there has been deliberately removed:
+
+- No purchase. Every feature is free, permanently. The tip options unlock nothing; there is no entitlement check anywhere in the codebase.
+- No account, no subscription, no server. Nothing to sign up for, nothing to cancel, nothing to keep paying for.
+- No new hardware. Families in this situation almost always already have a spare tablet and a phone.
+- No internet. Bluetooth only, so it works in an old apartment, in a rural house, during an outage, in a ward with no guest Wi-Fi.
+- No new motor skill to learn. Single-tap targets only, which is what lets iOS Eye Tracking and Dwell Control drive the app directly. Someone who can only move their eyes can still call for help. VoiceOver is fully supported and verified on device.
+- Open source under MIT. If this project stops being maintained, the people relying on it are not stranded.
+
+WHAT IT DELIBERATELY DOES NOT CLAIM
+
+It is not a medical alert service. It will not reach a caregiver who has left the house. It cannot send a call if the app has been force-quit or the battery is dead. All three limits are stated in the app on first launch, in the App Store listing, and in the README.
+
+For a tool that someone's safety may rest on, an honest boundary is worth more than an impressive claim. A family that knows exactly what this does can decide correctly whether to rely on it. That is the difference between helping someone and endangering them.

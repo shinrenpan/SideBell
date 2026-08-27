@@ -1,0 +1,14 @@
+Two weeks in the review queue. SideBell is live.
+
+It's a call bell for people who can't speak or move easily. They tap a button on the iPad beside their bed — their caregiver's phone raises an alarm and says out loud what's needed.
+
+Bluetooth only. No server, no account, no subscription. It keeps working when the Wi-Fi doesn't, which in a home care setting is most of the time.
+
+Every control is a single tap. No swiping, no long press — so iOS Eye Tracking and Dwell Control can drive it directly, without the app implementing any of its own. VoiceOver is fully supported.
+
+Built for RevenueCat Shipaton 2026. Every feature is free — the tip options unlock nothing.
+
+📱 App Store: https://apps.apple.com/app/id6799201744
+⚙️ Source, specs and device-test logs (MIT): https://github.com/shinrenpan/SideBell
+
+#Shipaton #BuildInPublic #Accessibility #AssistiveTechnology #iOSDev #ALS

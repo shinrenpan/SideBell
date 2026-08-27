@@ -1,0 +1,7 @@
+Two things that will save you time.
+
+First: Bluetooth is unavailable in the iOS Simulator, and SideBell needs two devices to demonstrate anything at all. A single device will always show "Not connected" — that is the Simulator's limitation, not a defect. The 43-second video shows the entire loop on two physical devices in one unbroken take: the patient taps, the caregiver's phone raises an alarm and speaks the item aloud, and the acknowledgement travels back to the patient's screen.
+
+Second: there is nothing to unlock. Every feature is free. The three tip options grant no entitlement, no promo code is needed, and the patient side has no purchase UI at all.
+
+If you are interested in how it was built rather than only what it does, the repository carries more than the app: DECISIONS.md records the decisions that cost something to learn, and docs/device-verification/ holds every manual device test with its actual result and OS version — the failures included, and including entries marked passed that later turned out to be wrong. Three defects were found the day before submission, all of which had survived a checklist entry marked passed. That is written down too.

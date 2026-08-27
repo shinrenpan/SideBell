@@ -18,7 +18,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 PROJECT="$(pwd)/SideBell.xcodeproj"
-OUT="$(pwd)/build/screenshots"
+OUT="${OUT:-$(pwd)/build/screenshots}"
 BUNDLE="com.shinrenpan.sidebell"
 mkdir -p "$OUT"
 
@@ -26,15 +26,23 @@ mkdir -p "$OUT"
 #   iPhone 17 Pro Max -> 1320x2868（歸在 APP_IPHONE_67）
 #   iPad Pro 13-inch  -> 2064x2752（歸在 APP_IPAD_PRO_3GEN_129）
 # Apple 沒有為 6.9"／13" 開獨立的 display type，兩者併入上一代的集合。
-IPHONE_NAME="iPhone 17 Pro Max"
-IPAD_NAME="iPad Pro 13-inch (M5)"
+#
+# 四個變數都可用環境變數覆寫，Shipaton 的截圖規格與 App Store 不同：
+# 規則要求至少一張 1179x2556（iPhone 17 Pro，非 Max），且不得有裝置外框。
+#   OUT=build/shipaton IPHONE_NAME="iPhone 17 Pro" LANGS=en DEVICES=iphone \
+#     ./scripts/screenshots.sh
+IPHONE_NAME="${IPHONE_NAME:-iPhone 17 Pro Max}"
+IPAD_NAME="${IPAD_NAME:-iPad Pro 13-inch (M5)}"
 
-LANGS=(en zh-Hant)
+read -r -a LANGS <<< "${LANGS:-en zh-Hant}"
+read -r -a DEVICES <<< "${DEVICES:-iphone ipad}"
 ROLES=(patient caregiver)
 
+# 找不到時要回傳空字串讓呼叫端印出訊息，不能讓 grep 的非零離開碼配上
+# `set -e` 把整支腳本靜默終止——那會看起來像什麼都沒發生。
 device_id() {
   xcrun simctl list devices available \
-    | grep -F "$1 (" | head -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/'
+    | { grep -F "$1 (" || true; } | head -1 | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/'
 }
 
 shoot() {
@@ -54,6 +62,22 @@ shoot() {
   xcrun simctl spawn "$dev" defaults write "$BUNDLE" \
     "com.shinrenpan.sidebell.role" -string "$role"
 
+  # 只固定電量與訊號，**不覆蓋時間**：畫面上的呼叫時間是實際跑出來的，狀態列
+  # 若改成 Apple 慣用的 9:41，就會出現「現在 9:41，但這則呼叫來自 12:42」的
+  # 矛盾。截圖裡的每個數字都該對得起來。
+  #
+  # 狀態列的**日期**跟著模擬器的系統語言走，-AppleLanguages 管不到（那只換
+  # App）。英文截圖若出現中文日期，改該台模擬器的語言：
+  #   xcrun simctl shutdown <UDID>
+  #   PLIST=~/Library/Developer/CoreSimulator/Devices/<UDID>/data/Library/Preferences/.GlobalPreferences.plist
+  #   /usr/libexec/PlistBuddy -c "Delete :AppleLanguages" "$PLIST"
+  #   /usr/libexec/PlistBuddy -c "Add :AppleLanguages array" "$PLIST"
+  #   /usr/libexec/PlistBuddy -c "Add :AppleLanguages:0 string en-US" "$PLIST"
+  # override 會留在裝置上直到 clear，不先清會疊加到上一次的設定。
+  xcrun simctl status_bar "$dev" clear 2>/dev/null || true
+  xcrun simctl status_bar "$dev" override \
+    --batteryState charged --batteryLevel 100 --wifiBars 3 2>/dev/null || true
+
   xcrun simctl launch "$dev" "$BUNDLE" \
     -SideBellScreenshotMode -AppleLanguages "($lang)" -AppleLocale "$lang" >/dev/null 2>&1
 
@@ -62,9 +86,12 @@ shoot() {
   echo "  ${tag}-${role}-${lang}.png"
 }
 
-for entry in "iphone|$IPHONE_NAME" "ipad|$IPAD_NAME"; do
-  tag="${entry%%|*}"
-  name="${entry#*|}"
+for tag in "${DEVICES[@]}"; do
+  case "$tag" in
+    iphone) name="$IPHONE_NAME" ;;
+    ipad)   name="$IPAD_NAME" ;;
+    *)      echo "未知的裝置代號：${tag}（可用 iphone / ipad）" >&2; exit 1 ;;
+  esac
   dev="$(device_id "$name")"
 
   if [ -z "$dev" ]; then
@@ -72,7 +99,7 @@ for entry in "iphone|$IPHONE_NAME" "ipad|$IPAD_NAME"; do
     exit 1
   fi
 
-  echo "== $tag（$name）=="
+  echo "== ${tag}（${name}）=="
   xcrun simctl boot "$dev" 2>/dev/null || true
   sleep 20
 

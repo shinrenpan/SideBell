@@ -1,0 +1,14 @@
+排了兩個禮拜的審核隊伍，SideBell 上架了。
+
+這是給無法出聲、行動困難的人用的呼叫鈴。按下床邊 iPad 上的格子，照顧者的手機就會響起警報，並唸出他需要什麼。
+
+只走藍牙。不需要伺服器、不需要帳號、不需要訂閱——網路斷了照樣能用，而那在居家照護現場是常態。
+
+所有控制項都只需要單擊。不必滑動、不必長按，所以 iOS 內建的眼球追蹤與停留控制可以直接操作它，App 自己不需要實作任何眼控。VoiceOver 完整支援。
+
+為 RevenueCat Shipaton 2026 而做。全功能免費，App 內的支持選項不解鎖任何東西。
+
+📱 App Store：https://apps.apple.com/app/id6799201744
+⚙️ 原始碼、規格與實機測試紀錄（MIT）：https://github.com/shinrenpan/SideBell
+
+#Shipaton #BuildInPublic #Accessibility #AssistiveTechnology #iOSDev #ALS
