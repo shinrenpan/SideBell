@@ -20,6 +20,8 @@ Built for people with ALS, severe motor impairment, or anyone recovering in bed
 — and for the person taking care of them.
 
 **▶︎ [Watch it work](https://youtu.be/cQijN-efZqE)** (43s, two devices, no cuts)
+· **📖 [Set-up guide](https://shinrenpan.github.io/SideBell/guide/en/)**
+（[中文](https://shinrenpan.github.io/SideBell/guide/zhTW/)）
 
 <table>
 <tr>
@@ -200,5 +202,8 @@ the license.
 ## Credits
 
 Built by [Shinren Pan](https://github.com/shinrenpan) for RevenueCat Shipaton 2026.
+
+Set-up guide: [English](https://shinrenpan.github.io/SideBell/guide/en/) ·
+[繁體中文](https://shinrenpan.github.io/SideBell/guide/zhTW/)
 
 Privacy policy: <https://shinrenpan.github.io/SideBell/privacy/>
