@@ -178,8 +178,9 @@ now is translation.
 
 Strings live in `Sources/Resources/Localizable.xcstrings`. Indonesian and
 Vietnamese are on the roadmap for a concrete reason: in home care in Taiwan, the
-person actually operating the caregiver's phone is often a migrant care worker.
-Reaching them costs little and changes a lot.
+person actually operating the caregiver's phone is often a migrant care worker,
+and 212,000 of them work as home caregivers. Filipino workers are already served
+by the English build. Reaching the rest costs little and changes a lot.
 
 But the call items are **not a translation exercise**. "Discomfort" carries a
 different weight in different languages, and how urgently someone would say it
