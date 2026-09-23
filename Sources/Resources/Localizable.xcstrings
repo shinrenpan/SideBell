@@ -112,7 +112,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "患者按下格子後，呼叫會出現在這裡。"
+            "value" : "病友按下格子後，呼叫會出現在這裡。"
           }
         }
       }
@@ -142,7 +142,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目前收得到患者的呼叫"
+            "value" : "目前收得到病友的呼叫"
           }
         }
       }
@@ -152,7 +152,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目前收不到患者的呼叫，患者不在範圍內"
+            "value" : "目前收不到病友的呼叫，病友不在範圍內"
           }
         }
       }
@@ -192,7 +192,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "隨身攜帶，接收患者的呼叫"
+            "value" : "隨身攜帶，接收病友的呼叫"
           }
         }
       }
@@ -302,7 +302,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "離開目前角色並回到首頁，可重新選擇患者端或照顧者端"
+            "value" : "離開目前角色並回到首頁，可重新選擇病友端或照顧者端"
           }
         }
       }
@@ -322,7 +322,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已超過三分鐘，患者端已顯示無人回應"
+            "value" : "已超過三分鐘，病友端已顯示無人回應"
           }
         }
       }
@@ -412,7 +412,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "患者端"
+            "value" : "病友端"
           }
         }
       }
@@ -502,7 +502,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "送出確認，患者會看到有人回應了"
+            "value" : "送出確認，病友會看到有人回應了"
           }
         }
       }
@@ -512,7 +512,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "架設在患者身邊，用來發出呼叫"
+            "value" : "架設在病友身邊，用來發出呼叫"
           }
         }
       }
@@ -682,7 +682,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "確認未送達——目前連不上患者的裝置，請靠近一點再試一次"
+            "value" : "確認未送達——目前連不上病友的裝置，請靠近一點再試一次"
           }
         }
       }
@@ -742,7 +742,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "項目越多，患者尋找想按的那一格就越費力。可以考慮換掉現有的某一項，而不是再新增。"
+            "value" : "項目越多，病友尋找想按的那一格就越費力。可以考慮換掉現有的某一項，而不是再新增。"
           }
         }
       }
@@ -752,7 +752,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "患者將無法再用這一項求助。"
+            "value" : "病友將無法再用這一項求助。"
           }
         }
       }
@@ -792,7 +792,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "這個項目不能刪除，它是患者求助的方式。"
+            "value" : "這個項目不能刪除，它是病友求助的方式。"
           }
         }
       }
@@ -802,7 +802,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "這個畫面放得下 %lld 項。再多患者就看不到了——請先刪掉一項。"
+            "value" : "這個畫面放得下 %lld 項。再多病友就看不到了——請先刪掉一項。"
           }
         }
       }
@@ -852,7 +852,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你想讓患者能夠表達什麼？"
+            "value" : "你想讓病友能夠表達什麼？"
           }
         }
       }
